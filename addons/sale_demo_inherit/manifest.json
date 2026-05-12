@@ -1,0 +1,11 @@
+{
+  "name": "sale_demo_inherit",
+  "version": "1.0.0",
+  "depends": ["sales"],
+  "author": "Sumeru",
+  "description": "Demo: inherited sale tree view",
+  "application": false,
+  "data": [
+    "views/sale_order_views_inherit.xml"
+  ]
+}

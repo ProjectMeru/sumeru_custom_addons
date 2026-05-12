@@ -1,0 +1,10 @@
+# Copy to config.mk (gitignored) to pin the standard Sumeru tree without editing the repo Makefile.
+#
+# Monorepo sibling (default is already ../sumeru in Makefile):
+# SUMERU_ROOT = ../sumeru
+#
+# Production checkout:
+# SUMERU_ROOT = /opt/sumeru
+#
+# Dev: clone path (then run: make replace-sumeru)
+# SUMERU_ROOT = $(HOME)/src/sumeru

@@ -1,0 +1,5 @@
+<sumeru>
+    <data>
+        <menuitem id="menu_acme_demo_root" name="Acme Demo" sequence="95" web_icon="chart"/>
+    </data>
+</sumeru>

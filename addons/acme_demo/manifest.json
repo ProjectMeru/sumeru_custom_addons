@@ -1,0 +1,9 @@
+{
+  "name": "acme_demo",
+  "version": "1.0.0",
+  "depends": ["base"],
+  "author": "Acme / sumeru_custom_addons",
+  "description": "Sample custom app: root menu only (workspace addon)",
+  "application": true,
+  "data": ["views/menus.xml"]
+}

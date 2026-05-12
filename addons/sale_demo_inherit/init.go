@@ -1,0 +1,1 @@
+package sale_demo_inherit

@@ -1,0 +1,14 @@
+<sumeru>
+    <record id="view_order_tree_inherit_demo" model="ir.ui.view">
+        <field name="name">sale.order.tree.inherit.demo</field>
+        <field name="model">sale.order</field>
+        <field name="inherit_id" ref="sales.view_order_tree"/>
+        <field name="arch" type="xml">
+            <data>
+                <xpath expr="//field[@name='state']" position="after">
+                    <field name="phone" string="Phone"/>
+                </xpath>
+            </data>
+        </field>
+    </record>
+</sumeru>

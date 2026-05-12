@@ -1,0 +1,9 @@
+{
+  "name": "workspace_notes",
+  "version": "1.0.0",
+  "depends": ["base"],
+  "author": "sumeru_custom_addons",
+  "description": "Second sample custom module (hidden from Apps cards)",
+  "application": false,
+  "data": ["views/menus.xml"]
+}
