@@ -1,5 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
 <sumeru>
     <data>
+        <!-- ir.ui.menu -->
         <menuitem id="menu_workspace_notes_root" name="Workspace Notes" sequence="96" web_icon="chart"/>
     </data>
 </sumeru>

@@ -1,14 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
 <sumeru>
-    <record id="view_order_tree_inherit_demo" model="ir.ui.view">
-        <field name="name">sale.order.tree.inherit.demo</field>
-        <field name="model">sale.order</field>
-        <field name="inherit_id" ref="sales.view_order_tree"/>
-        <field name="arch" type="xml">
-            <data>
+    <data>
+        <!-- ir.ui.view : inherit sale.order tree (sales module) -->
+        <record id="view_order_tree_inherit_demo" model="ir.ui.view">
+            <field name="name">sale.order.tree.inherit.demo</field>
+            <field name="model">sale.order</field>
+            <field name="inherit_id" ref="sales.view_order_tree"/>
+            <field name="arch" type="xml">
                 <xpath expr="//field[@name='state']" position="after">
                     <field name="phone" string="Phone"/>
                 </xpath>
-            </data>
-        </field>
-    </record>
+            </field>
+        </record>
+    </data>
 </sumeru>
