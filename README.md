@@ -2,6 +2,17 @@
 
 Thin **workspace** next to the standard **`sumeru`** Go module: own `go.mod`, generated **`addonimports/`**, and a local **`sumeru.conf`** so you can **`git pull`** in **`../sumeru`** without committing generated glue here.
 
+### Architecture: 3-Tier Split
+To ensure future updates remain seamless, the system is divided into three layers:
+1. **Tier 1: Core Framework (`sumeru`)** — Standard engine and base models. **READ-ONLY**.
+2. **Tier 2: Standard Addons (`sumeru_addons`)** — Core business modules (CRM, Sales, Inventory). **READ-ONLY**.
+3. **Tier 3: Custom Workspace (`sumeru_custom_addons`)** — Your development area. Custom modules go in `addons/`.
+
+#### Updating:
+- `cd ../sumeru && git pull`
+- `cd ../sumeru_addons && git pull`
+- `cd ../sumeru_custom_addons && make generate`
+
 ---
 
 ## Prerequisites
