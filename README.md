@@ -30,7 +30,7 @@ Work from **this directory** (`sumeru_custom_addons`) unless you use only absolu
 | Step | Command | What it does |
 | ---- | ------- | -------------- |
 | 1. Config | `cp sumeru.conf.example sumeru.conf` then edit | Local INI (gitignored if you use the repo’s `.gitignore` for `sumeru.conf`). |
-| 2. Point `go.mod` at standard Sumeru | `make replace-sumeru SUMERU_ROOT=../sumeru` | Writes `replace sumeru => …` and runs `go mod tidy`. Use an **absolute** path on servers, e.g. `SUMERU_ROOT=/opt/sumeru`. |
+| 2. Point `go.mod` at standard trees | `make replace-sumeru SUMERU_ROOT=../sumeru` and **`make replace-sumeru-addons ADDONS_ROOT=../sumeru_addons`** | Writes **`replace`** lines and runs **`go mod tidy`**. Use **absolute** paths on servers. |
 | 3. Regenerate addon blank-imports | `make generate` | Runs `sumeru-import-gen` → **`addonimports/zimports.go`** (gitignored). Required after changing **`addons_path`** or adding/removing addons. |
 | 4. Start HTTP server | `make run` | Runs **`make generate`** then **`go run . -- -c sumeru.conf`**. |
 | | `go run . -- -c sumeru.conf` | Same server without regenerating imports (only if `addonimports/zimports.go` is already fresh). |
@@ -53,7 +53,8 @@ Variables (override on the command line, e.g. `make run CONF=/path/to/other.conf
 
 | Variable | Default | Purpose |
 | -------- | ------- | ------- |
-| **`SUMERU_ROOT`** | `../sumeru` | Filesystem path to the standard **`sumeru`** repo (must contain **`go.mod`** `module sumeru`). Used for **`go run …/cmd/sumeru-import-gen -root`** and for **`make replace-sumeru`**. |
+| **`SUMERU_ROOT`** | `../sumeru` | **`sumeru`** checkout (`module sumeru`); used for **`go run …/cmd/sumeru-import-gen -root`** and **`make replace-sumeru`**. |
+| **`ADDONS_ROOT`** | `../sumeru_addons` | **`sumeru_addons`** checkout (`module sumeru_addons`); used for **`make replace-sumeru-addons`** (addon discovery still comes from **`addons_path`** in the INI). |
 | **`CONF`** | `sumeru.conf` | INI passed to **`go run . -- -c`** and used by **`make generate`** (resolved to **`$(CURDIR)/$(CONF)`** when not absolute). |
 | **`OUT`** | `$(CURDIR)/addonimports/zimports.go` | Absolute output path for generated imports so files are **never** written under **`../sumeru`** by mistake. |
 | **`EXTRA_RUN_FLAGS`** | *(empty)* | Appended to **`go run . --`** in **`make run`** (e.g. `EXTRA_RUN_FLAGS='-p 9090 -i sales'`). |
@@ -65,7 +66,8 @@ Targets:
 | **`make generate`** | Refresh **`addonimports/zimports.go`** from **`CONF`** (`addons_path`, etc.). |
 | **`make run`** | **`generate`** then start the server with **`-c $(CONF)`**. |
 | **`make replace-sumeru`** | Set **`go.mod`** `replace sumeru => …` from **`SUMERU_ROOT`**, then **`go mod tidy`**. |
-| **`make show-sumeru`** | Print **`SUMERU_ROOT`**, resolved path, and the **`replace`** line. |
+| **`make replace-sumeru-addons`** | Set **`go.mod`** `replace sumeru_addons => …` from **`ADDONS_ROOT`**, then **`go mod tidy`**. |
+| **`make show-sumeru`** | Print **`SUMERU_ROOT`**, **`ADDONS_ROOT`**, resolved paths, and **`replace`** lines from **`go.mod`**. |
 | **`make help`** | Summarize variables and targets. |
 
 ---
@@ -100,7 +102,7 @@ go run . -- -c /etc/sumeru/prod.conf --http-port 443
 
 Section header: **`[options]`**. Format: **`key = value`**. Lines starting with **`#`** or **`;`** are comments.
 
-Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates_path`**, **`logo_path`**, **`brand_css`**, **`log_file`**) resolve **relative values from the INI file’s directory** (unless the value is already absolute).
+Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates_path`**, **`logo_path`**, **`brand_css`**, **`log_file`**, and similar) resolve **relative values from the INI file’s directory** (unless the value is already absolute).
 
 ### Required
 
@@ -137,13 +139,19 @@ Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates
 | **`user_display_name`** | Header label; if empty and **`user`** is installed, first **`core.user`** display is used. |
 | **`brand_css`** | Extra CSS linked as **`/static/brand.css`** after view stylesheets. |
 
-### Optional — logging
+### Optional — logging (Zap JSON + optional lumberjack)
 
 | Key | Purpose |
 | --- | ------- |
-| **`log_file`** | If set, **`log`** output is **appended** to this file **and** still written to **stderr**. Parent directories are created. |
+| **`log_stdout`** | Default **true** — emit JSON logs to **stdout** (typical for Kubernetes log collectors). |
+| **`log_file`** | Optional second sink; path is absolutized from the INI directory. Parent directories are created. |
+| **`log_rolling`** | **false** (default) = append-only file. **true** = size-based rotation via **lumberjack** (typical VPS). Use **false** when the platform manages rotation (e.g. Kubernetes). |
+| **`log_max_size_mb`** | Rotate after this many MB per file (default **100** when rolling is on and this is **0**). |
+| **`log_max_backups`** | Number of rotated files to keep. |
+| **`log_max_age_days`** | Delete rotated files older than **N** days (**0** = no age-based pruning). |
+| **`dev_mode`** | **true** → Zap **debug** level and other dev-only behavior in core. |
 
-Full annotated list: **`../sumeru/sumeru.conf`**.
+Full annotated list (core-only defaults): **`../sumeru/sumeru.conf.example`**.
 
 ---
 
@@ -169,4 +177,4 @@ Sample modules live under **`addons/`**:
 - **`acme_demo`** — example app with a root menu entry.
 - **`workspace_notes`** — second example (`application: false` in manifest).
 
-List them on **`addons_path`** after the standard tree, e.g. **`../sumeru/addons,./addons`**, and run **`make generate`** so **`addonimports/zimports.go`** picks up **`sumeru_custom_addons/addons/...`** imports alongside **`sumeru/...`**.
+List them on **`addons_path`** in order, e.g. **`../sumeru/addons,../sumeru_addons,./addons`** (see **`sumeru.conf.example`**), and run **`make generate`** so **`addonimports/zimports.go`** picks up **`sumeru/...`**, **`sumeru_addons/...`**, and **`sumeru_custom_addons/addons/...`** imports as needed.

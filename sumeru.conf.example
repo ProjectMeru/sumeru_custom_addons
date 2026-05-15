@@ -1,5 +1,5 @@
 # Copy to sumeru.conf and tune. Paths are relative to this file’s directory unless absolute.
-# See ../sumeru/sumeru.conf for the full variable list.
+# See ../sumeru/sumeru.conf.example for the full variable list (including logging).
 
 [options]
 db_host = localhost
@@ -11,11 +11,31 @@ db_sslmode = disable
 
 http_port = 8080
 
+# dev_mode        Default false. true → Zap debug level and dev-only server behavior. Same boolean forms as log_stdout.
+# dev_mode = false
+
 # Standard tree (go.mod module sumeru); core/base and default assets/templates resolve here.
 sumeru_home = ../sumeru
 
-# Extra installable apps: standard addons, then this repo’s addons/.
-addons_path = ../sumeru/addons,./addons
+# Discovery order: core apps (sumeru/addons), standard business addons (sumeru_addons), then this repo’s addons/.
+addons_path = ../sumeru/addons,../sumeru_addons,./addons
 
-# Optional: append application log (parent dirs created); still mirrored to stderr.
-# log_file = ./logs/sumeru.log
+# --- Logging (Uber Zap JSON + optional lumberjack rolling writer) ---
+# log_enabled      Default true — set false to disable app JSON logs (stdlib log discarded after startup).
+# log_timezone     UTC, Local, or IANA (e.g. Asia/Kolkata) for timestamps and L(ctx) log_tz.
+# Kubernetes: keep log_rolling=false (or omit); collect JSON from stdout only — leave log_file commented.
+# VPS / single server: set log_file and log_rolling=true for size-based rotation on disk.
+#
+# log_stdout       Default true — JSON logs to stdout.
+# log_file         Optional; path relative to this INI unless absolute.
+# log_rolling      false = append-only file; true = rotate by size (lumberjack).
+# log_max_size_mb  Rotate after this many MB per file (default 100 when rolling and unset).
+# log_max_backups  Number of old log files to retain.
+# log_max_age_days Delete rotated files older than N days (0 = no age limit).
+
+log_stdout = true
+log_file = ./logs/sumeru.log
+log_rolling = true
+log_max_size_mb = 50
+log_max_backups = 14
+log_max_age_days = 30

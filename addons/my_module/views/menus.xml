@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sumeru>
     <data>
-        <!-- Root Menu -->
-        <menuitem id="menu_my_module_root" name="My Module" sequence="10" web_icon="static/src/img/icon.png"/>
+        <!-- sys.menu.name is globally unique; each label must differ from other addons (e.g. base "Configuration"). -->
+        <menuitem id="menu_my_module_root" name="My Module" sequence="20" web_icon="cube" />
 
-        <!-- Category Menu -->
-        <menuitem id="menu_my_module_category" name="Configuration" parent="menu_my_module_root" sequence="100"/>
+        <menuitem id="menu_my_module_category" name="My module organization" parent="menu_my_module_root"
+            sequence="100" />
 
-        <!-- Action Menu -->
-        <menuitem id="menu_my_module_action" name="My Module" parent="menu_my_module_root" action="action_my_module" sequence="10"/>
+        <menuitem id="menu_my_module_action" name="My module records" parent="menu_my_module_category"
+            action="action_my_module" sequence="10" />
     </data>
 </sumeru>

@@ -1,7 +1,7 @@
 # Optional local overrides (gitignored): SUMERU_ROOT, CONF, OUT, etc.
 -include config.mk
 
-.PHONY: generate run help replace-sumeru show-sumeru
+.PHONY: generate run help replace-sumeru replace-sumeru-addons show-sumeru
 
 # Path to the standard sumeru Go module (directory containing go.mod).
 # Default: sibling ../sumeru.
@@ -16,6 +16,9 @@
 # Or set SUMERU_ROOT once in config.mk (see config.mk.example).
 SUMERU_ROOT ?= ../sumeru
 
+# Standard business addons module (directory containing go.mod module sumeru_addons).
+ADDONS_ROOT ?= ../sumeru_addons
+
 CONF ?= sumeru.conf
 # Absolute path: -out is relative to SUMERU_ROOT when not absolute (see sumeru-import-gen).
 OUT ?= $(CURDIR)/addonimports/zimports.go
@@ -26,8 +29,12 @@ CONF_FOR_GEN := $(if $(filter /%,$(CONF)),$(CONF),$(CURDIR)/$(CONF))
 # Resolved standard tree (must exist) for import-gen -root and go run …/cmd.
 SUMERU_ROOT_ABS := $(shell cd "$(SUMERU_ROOT)" 2>/dev/null && pwd || echo "")
 
+ADDONS_ROOT_ABS := $(shell cd "$(ADDONS_ROOT)" 2>/dev/null && pwd || echo "")
+
 # go.mod replace target: absolute for prod-style SUMERU_ROOT, else keep the path literal (portable dev).
 REPLACE_SUMERU := $(if $(filter /%,$(SUMERU_ROOT)),$(SUMERU_ROOT_ABS),$(SUMERU_ROOT))
+
+REPLACE_SUMERU_ADDONS := $(if $(filter /%,$(ADDONS_ROOT)),$(ADDONS_ROOT_ABS),$(ADDONS_ROOT))
 
 # Core UI styles are plain CSS under $(SUMERU_ROOT)/core/engine/assets/css/ (see sumeru-theme.css).
 
@@ -45,10 +52,19 @@ replace-sumeru:
 	go mod tidy
 	@echo "go.mod: replace sumeru => $(REPLACE_SUMERU)"
 
+replace-sumeru-addons:
+	@test -n "$(ADDONS_ROOT_ABS)" || (echo "ADDONS_ROOT=$(ADDONS_ROOT): no such directory" >&2 && exit 1)
+	go mod edit -replace sumeru_addons=$(REPLACE_SUMERU_ADDONS)
+	go mod tidy
+	@echo "go.mod: replace sumeru_addons => $(REPLACE_SUMERU_ADDONS)"
+
 show-sumeru:
 	@echo "SUMERU_ROOT=$(SUMERU_ROOT)"
 	@echo "resolved tree: $(SUMERU_ROOT_ABS)"
-	@echo "replace segment: $(REPLACE_SUMERU)"
+	@echo "ADDONS_ROOT=$(ADDONS_ROOT)"
+	@echo "resolved addons: $(ADDONS_ROOT_ABS)"
+	@echo "replace sumeru: $(REPLACE_SUMERU)"
+	@echo "replace sumeru_addons: $(REPLACE_SUMERU_ADDONS)"
 	@grep '^replace sumeru' go.mod || true
 
 # Dev server: regenerate imports then run this module’s main.
@@ -56,10 +72,11 @@ run: generate
 	go run . -- -c $(CONF) $(EXTRA_RUN_FLAGS)
 
 help:
-	@echo "Variables: SUMERU_ROOT, CONF, OUT. Optional config.mk — see config.mk.example"
+	@echo "Variables: SUMERU_ROOT, ADDONS_ROOT, CONF, OUT. Optional config.mk — see config.mk.example"
 	@echo "Targets:"
-	@echo "  make replace-sumeru  - write go.mod replace sumeru => path (abs if SUMERU_ROOT is absolute, else literal); tidy"
-	@echo "  make show-sumeru     - print SUMERU_ROOT, resolved path, and go.mod replace line"
+	@echo "  make replace-sumeru        - write go.mod replace sumeru => path; tidy"
+	@echo "  make replace-sumeru-addons - write go.mod replace sumeru_addons => path; tidy"
+	@echo "  make show-sumeru           - print SUMERU_ROOT, resolved path, and go.mod replace line"
 	@echo "  make generate        - refresh addonimports/zimports.go (uses CONF in this dir by default)"
 	@echo "  make run             - generate then go run . -- -c $(CONF)"
 	@echo "  copy sumeru.conf.example to sumeru.conf and adjust paths first."
