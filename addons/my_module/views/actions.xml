@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <!-- Window Action -->
+        <record id="action_my_module" model="sys.action.window">
+            <field name="name">My Module</field>
+            <field name="core_model">my.module</field>
+            <field name="view_mode">tree,form,kanban</field>
+            <field name="help" type="html">
+                <p class="sum-view-nocontent-smiling-face">
+                    Create your first My Module!
+                </p>
+            </field>
+        </record>
+    </data>
+</sumeru>

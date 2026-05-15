@@ -133,8 +133,8 @@ Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates
 | Key | Purpose |
 | --- | ------- |
 | **`logo_path`** | Image served at **`/static/app-logo`**. |
-| **`company_display_name`** | Header chip; if empty and **`company`** is installed, first **`res.company`** name is used. |
-| **`user_display_name`** | Header label; if empty and **`user`** is installed, first **`res.users`** display is used. |
+| **`company_display_name`** | Header chip; if empty and **`company`** is installed, first **`core.company`** name is used. |
+| **`user_display_name`** | Header label; if empty and **`user`** is installed, first **`core.user`** display is used. |
 | **`brand_css`** | Extra CSS linked as **`/static/brand.css`** after view stylesheets. |
 
 ### Optional — logging

@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<sumeru>
-    <data>
-        <!-- ir.ui.menu -->
-        <menuitem id="menu_acme_demo_root" name="Acme Demo" sequence="95" web_icon="chart"/>
-    </data>
-</sumeru>

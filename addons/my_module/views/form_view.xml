@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <record id="view_my_module_form" model="sys.view">
+            <field name="name">my_module.form</field>
+            <field name="model">my.module</field>
+            <field name="arch" type="xml">
+                <form string="My Module">
+                    <header>
+                        <button name="action_confirm" string="Confirm" type="object" class="btn-primary"/>
+                        <field name="active" widget="statusbar"/>
+                    </header>
+                    <sheet>
+                        <div class="sum_title">
+                            <h1>
+                                <field name="name" placeholder="Title..."/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="sequence"/>
+                            </group>
+                            <group>
+                                <field name="active"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Description" name="description">
+                                <field name="description" placeholder="Internal notes..."/>
+                            </page>
+                        </notebook>
+                    </sheet>
+                </form>
+            </field>
+        </record>
+    </data>
+</sumeru>

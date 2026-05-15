@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <!-- Root Menu -->
+        <menuitem id="menu_my_module_root" name="My Module" sequence="10" web_icon="static/src/img/icon.png"/>
+
+        <!-- Category Menu -->
+        <menuitem id="menu_my_module_category" name="Configuration" parent="menu_my_module_root" sequence="100"/>
+
+        <!-- Action Menu -->
+        <menuitem id="menu_my_module_action" name="My Module" parent="menu_my_module_root" action="action_my_module" sequence="10"/>
+    </data>
+</sumeru>
