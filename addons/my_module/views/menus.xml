@@ -2,7 +2,7 @@
 <sumeru>
     <data>
         <!-- sys.menu.name is globally unique; each label must differ from other addons (e.g. base "Configuration"). -->
-        <menuitem id="menu_my_module_root" name="My Module" sequence="20" web_icon="cube" />
+        <menuitem id="menu_my_module_root" name="My Module" sequence="20" web_icon="shield" />
 
         <menuitem id="menu_my_module_category" name="My module organization" parent="menu_my_module_root"
             sequence="100" />
