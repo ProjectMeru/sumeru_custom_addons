@@ -1,16 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sumeru>
     <data>
-        <record id="view_my_module_tree" model="sys.view">
-            <field name="name">my_module.tree</field>
-            <field name="model">my.module</field>
-            <field name="arch" type="xml">
-                <tree string="My Module">
-                    <field name="sequence" widget="handle"/>
-                    <field name="name"/>
-                    <field name="active" widget="boolean_toggle"/>
-                </tree>
-            </field>
-        </record>
+        <view id="view_my_module_tree" model="my.module" type="tree">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="active" widget="boolean_toggle"/>
+        </view>
     </data>
 </sumeru>
