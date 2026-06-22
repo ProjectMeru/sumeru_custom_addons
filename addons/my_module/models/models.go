@@ -2,7 +2,6 @@
 package models
 
 import (
-	"context"
 	"sumeru/core/base"
 )
 
@@ -28,36 +27,6 @@ func (m *MyModule) Fields() []base.FieldDefinition {
 		{Name: "active", Type: base.Boolean, String: "Active", DefaultVal: "true"},
 		{Name: "sequence", Type: base.Integer, String: "Sequence", DefaultVal: "10"},
 	}
-}
-
-// --- Standard CRUD Methods ---
-// These methods demonstrate how to use the 'base' API while respecting security and context.
-
-// CreateNew inserts a new record with the given values.
-func (m *MyModule) CreateNew(ctx context.Context, vals map[string]interface{}) (int, error) {
-	// base.Create handles RBAC/ABAC automatically based on the 'ctx' user.
-	return base.Create(ctx, base.CreateInput{
-		Model:  m,
-		Values: vals,
-	})
-}
-
-// FetchAll retrieves all active records.
-func (m *MyModule) FetchAll(ctx context.Context) ([]map[string]interface{}, error) {
-	return base.Search(ctx, base.SearchInput{
-		ModelName: m.ModelName(),
-		Domain:    [][]interface{}{ {"active", "=", true} },
-	})
-}
-
-// UpdateRecord modifies an existing record.
-func (m *MyModule) UpdateRecord(ctx context.Context, id int, vals map[string]interface{}) (int, error) {
-	vals["id"] = id
-	return base.Upsert(ctx, base.UpsertInput{
-		Model:       m,
-		Values:      vals,
-		ConflictCol: "id",
-	})
 }
 
 func init() {

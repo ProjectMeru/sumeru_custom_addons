@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <!-- sys.menu.name is globally unique; each label must differ from other addons (e.g. base "Configuration"). -->
+        <menuitem id="menu_my_module_root" name="Student" sequence="20" web_icon="shield" />
+
+        <menuitem id="menu_my_module_category" name="Student" parent="menu_my_module_root"
+            sequence="100" />
+
+        <menuitem id="menu_my_module_action" name="Student records" parent="menu_my_module_category"
+            action="action_student" sequence="10" />
+    </data>
+</sumeru>

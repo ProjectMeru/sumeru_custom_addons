@@ -6,7 +6,10 @@ replace sumeru => ../sumeru
 
 replace sumeru_addons => ../sumeru_addons
 
-require sumeru v0.0.0
+require (
+	sumeru v0.0.0
+	sumeru_addons v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/lib/pq v1.12.3 // indirect

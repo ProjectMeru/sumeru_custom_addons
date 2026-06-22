@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <!-- Module Category -->
+        <record id="module_category_my_module" model="sys.module.category">
+            <field name="name">My Module</field>
+            <field name="sequence">100</field>
+        </record>
+
+        <!-- User Group -->
+        <record id="group_my_module_user" model="core.group">
+            <field name="name">User</field>
+            <field name="category_id" ref="module_category_my_module"/>
+            <field name="implied_ids" eval="[(4, ref('base.group_user'))]"/>
+        </record>
+
+        <!-- Manager Group -->
+        <record id="group_my_module_manager" model="core.group">
+            <field name="name">Manager</field>
+            <field name="category_id" ref="module_category_my_module"/>
+            <field name="implied_ids" eval="[(4, ref('group_my_module_user'))]"/>
+        </record>
+    </data>
+</sumeru>

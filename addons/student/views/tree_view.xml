@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <record id="view_student_tree" model="sys.view">
+            <field name="name">student.tree</field>
+            <field name="model">student</field>
+            <field name="arch" type="xml">
+                <tree string="Student">
+                    <field name="email" widget="handle"/>
+                    <field name="name"/>
+                    <field name="active" widget="boolean_toggle"/>
+                </tree>
+            </field>
+        </record>
+    </data>
+</sumeru>
