@@ -2,15 +2,12 @@
 <sumeru>
     <data>
         <!-- Window Action -->
-        <record id="action_my_module" model="sys.action.window">
-            <field name="name">My Module</field>
-            <field name="core_model">my.module</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="help" type="html">
+        <action id="action_my_module" type="window" model="my.module" name="My Module" view_mode="tree,form,kanban">
+            <help>
                 <p class="sum-view-nocontent-smiling-face">
                     Create your first My Module!
                 </p>
-            </field>
-        </record>
+            </help>
+        </action>
     </data>
 </sumeru>

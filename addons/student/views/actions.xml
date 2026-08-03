@@ -2,15 +2,12 @@
 <sumeru>
     <data>
         <!-- Window Action -->
-        <record id="action_student" model="sys.action.window">
-            <field name="name">Student</field>
-            <field name="core_model">student</field>
-            <field name="view_mode">tree,form,kanban</field>
-            <field name="help" type="html">
+        <action id="action_student" type="window" model="student" name="Student" view_mode="tree,form,kanban">
+            <help>
                 <p class="sum-view-nocontent-smiling-face">
                     Create your first Student!
                 </p>
-            </field>
-        </record>
+            </help>
+        </action>
     </data>
 </sumeru>
