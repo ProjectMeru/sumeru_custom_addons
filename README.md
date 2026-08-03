@@ -118,7 +118,7 @@ Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates
 | **`db_password`** | Database password.                                                                                                                                                                                          |
 | **`db_name`**     | Database name (overridable at runtime with **`-d`** / **`--database`**).                                                                                                                                    |
 | **`http_port`**   | HTTP listen port (overridable with **`-p`** / **`--http-port`**).                                                                                                                                           |
-| **`addons_path`** | Comma-separated directories; each immediate subfolder with **`manifest.json`** is an addon. **`core/base`** (platform addons) is always prepended; **later roots override** the same technical module name. |
+| **`addons_path`** | Comma-separated directories; each immediate subfolder with **`manifest.json`** is an addon. Later roots in **`addons_path`** override the same technical module name. |
 
 ### Optional — database
 
@@ -130,7 +130,7 @@ Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates
 
 | Key                  | Purpose                                                                                                                                                                                                                        |
 | -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`sumeru_home`**    | Directory of the standard **`sumeru`** checkout. When set, **`core/base`** loads from here; if **`assets_path`** / **`templates_path`** are omitted, defaults are under this tree. Relative → resolved from the INI directory. |
+| **`sumeru_home`**    | Directory of the standard **`sumeru`** checkout. When set, if **`assets_path`** / **`templates_path`** are omitted, defaults are under this tree. Relative → resolved from the INI directory. |
 | **`assets_path`**    | Static files (CSS/JS). Default: **`core/engine/assets`** (under **`sumeru_home`** if set, else next to INI if INI sits in a tree with **`go.mod`**, else cwd semantics — see upstream docs).                                   |
 | **`templates_path`** | HTML templates. Default: **`core/engine/templates`** (same rules).                                                                                                                                                             |
 
