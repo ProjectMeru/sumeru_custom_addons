@@ -1,8 +1,8 @@
 package main
 
 import (
-	_ "sumeru_custom_addons/addonimports"
 	"sumeru/core/server"
+	_ "sumeru_custom_addons/addonimports"
 )
 
 func main() {
