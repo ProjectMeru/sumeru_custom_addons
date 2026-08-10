@@ -19,9 +19,9 @@ set -euo pipefail
 #
 # Examples:
 #   ./sumeru-workspace.sh
-#   ./sumeru-workspace.sh -i acme_demo --stop-after-init
-#   ./sumeru-workspace.sh -u sales,workspace_notes
-#   SUMERU_INSTALL=acme_demo ./sumeru-workspace.sh --stop-after-init
+#   ./sumeru-workspace.sh -i my_module --stop-after-init
+#   ./sumeru-workspace.sh -u sales,student
+#   SUMERU_INSTALL=my_module ./sumeru-workspace.sh --stop-after-init
 #   SUMERU_UPDATE=all ./sumeru-workspace.sh --stop-after-init
 #
 

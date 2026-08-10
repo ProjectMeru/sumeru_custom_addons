@@ -1,52 +1,141 @@
 # sumeru_custom_addons
 
-Thin **workspace** next to the standard **`sumeru`** Go module: own `go.mod`, generated **`addonimports/`**, and a local **`sumeru.conf`** so you can **`git pull`** in **`../sumeru`** without committing generated glue here.
+Thin **workspace** for **your** custom / client Sumeru addons. This repo sits next to the standard **`sumeru`** and **`sumeru_addons`** trees: own `go.mod`, generated **`addonimports/`**, and a local **`sumeru.conf`**, so you can **`git pull`** upstream core without committing generated glue here.
 
-### Architecture: 3-Tier Split
+Put modules you create for a client or project under **`addons/`**. Keep **`sumeru`** and **`sumeru_addons`** read-only.
 
-To ensure future updates remain seamless, the system is divided into three layers:
+## License
+
+This repository is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for the full text.
+
+Custom addons you add under `addons/` are part of this workspace and are covered by the same license unless you change licensing for your derived work.
+
+## Architecture: 3-Tier Split
 
 1. **Tier 1: Core Framework (`sumeru`)** — Standard engine and base models. **READ-ONLY**.
 2. **Tier 2: Standard Addons (`sumeru_addons`)** — Core business modules (CRM, Sales, Inventory). **READ-ONLY**.
 3. **Tier 3: Custom Workspace (`sumeru_custom_addons`)** — Your development area. Custom modules go in `addons/`.
 
-#### Updating:
+Expected sibling layout:
 
-- `cd ../sumeru && git pull`
-- `cd ../sumeru_addons && git pull`
-- `cd ../sumeru_custom_addons && make generate`
-
----
+```text
+parent/
+  sumeru/                 # Tier 1 (read-only)
+  sumeru_addons/          # Tier 2 (read-only)
+  sumeru_custom_addons/   # Tier 3 (this repo — your custom addons)
+```
 
 ## Prerequisites
 
 - **Go** (same version as `../sumeru/go.mod`)
 - **PostgreSQL** and an empty database matching `db_name` in your INI
-- Standard **Sumeru** checkout at **`SUMERU_ROOT`** (default `../sumeru`)
+- Checkouts of **`sumeru`** and **`sumeru_addons`** as siblings (defaults: `../sumeru`, `../sumeru_addons`)
 
----
+## Quick start (how to use)
 
-## Commands to run
+Work from **this directory** unless you use absolute paths in the INI.
 
-Work from **this directory** (`sumeru_custom_addons`) unless you use only absolute paths in the INI.
+```bash
+# Clone as siblings (adjust URLs to your org)
+git clone <sumeru-remote> sumeru
+git clone <sumeru-addons-remote> sumeru_addons
+git clone git@github.com:ProjectMeru/sumeru_custom_addons.git
+cd sumeru_custom_addons
 
-| Step                                | Command                                                                                                       | What it does                                                                                                                                 |
-| ----------------------------------- | ------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
-| 1. Config                           | `cp sumeru.conf.example sumeru.conf` then edit                                                                | Local INI (gitignored if you use the repo’s `.gitignore` for `sumeru.conf`).                                                                 |
-| 2. Point `go.mod` at standard trees | `make replace-sumeru SUMERU_ROOT=../sumeru` and **`make replace-sumeru-addons ADDONS_ROOT=../sumeru_addons`** | Writes **`replace`** lines and runs **`go mod tidy`**. Use **absolute** paths on servers.                                                    |
-| 3. Regenerate addon blank-imports   | `make generate`                                                                                               | Runs `sumeru-import-gen` → **`addonimports/zimports.go`** (gitignored). Required after changing **`addons_path`** or adding/removing addons. |
-| 4. Start HTTP server                | `make run`                                                                                                    | Runs **`make generate`** then **`go run . -- -c sumeru.conf`**.                                                                              |
-|                                     | `go run . -- -c sumeru.conf`                                                                                  | Same server without regenerating imports (only if `addonimports/zimports.go` is already fresh).                                              |
-| 5. Install / update apps (optional) | `go run . -- -c sumeru.conf -i acme_demo --stop-after-init`                                                   | Install module **`acme_demo`** then exit (no HTTP).                                                                                          |
-|                                     | `go run . -- -c sumeru.conf -u acme_demo,workspace_notes`                                                     | Reload XML/metadata for those modules.                                                                                                       |
-| Build binary                        | `go build -o sumeru-workspace .`                                                                              | Produces a binary; run with `./sumeru-workspace -c sumeru.conf`.                                                                             |
+# Local config (gitignored)
+cp sumeru.conf.example sumeru.conf
+# Edit db_* and paths in sumeru.conf
+
+# Point go.mod at the standard trees
+make replace-sumeru SUMERU_ROOT=../sumeru
+make replace-sumeru-addons ADDONS_ROOT=../sumeru_addons
+
+# Generate blank-imports and run
+make generate
+make run
+```
+
+| Step | Command | What it does |
+| --- | --- | --- |
+| 1. Config | `cp sumeru.conf.example sumeru.conf` then edit | Local INI (gitignored). |
+| 2. Wire `go.mod` | `make replace-sumeru` and `make replace-sumeru-addons` | Writes `replace` lines and runs `go mod tidy`. Use absolute paths on servers. |
+| 3. Generate imports | `make generate` | Runs `sumeru-import-gen` → `addonimports/zimports.go` (gitignored). Required after changing `addons_path` or adding/removing addons. |
+| 4. Start server | `make run` | `make generate` then `go run . -- -c sumeru.conf`. |
+| 5. Install / update apps | `go run . -- -c sumeru.conf -i my_module --stop-after-init` | Install module then exit (no HTTP). |
+| | `go run . -- -c sumeru.conf -u my_module,student` | Reload XML/metadata for those modules. |
+| Build binary | `go build -o sumeru-workspace .` | Run with `./sumeru-workspace -c sumeru.conf`. |
 
 Inspect paths:
 
 ```bash
-make show-sumeru    # SUMERU_ROOT, resolved path, current go.mod replace line
+make show-sumeru    # SUMERU_ROOT, ADDONS_ROOT, go.mod replace lines
 make help           # short target list
 ```
+
+Optional: copy `config.mk.example` → `config.mk` (gitignored) to pin `SUMERU_ROOT` / `ADDONS_ROOT` without editing the Makefile.
+
+## Make this repo yours (re-point origin)
+
+This repository is a **template workspace**. After cloning, remove the template `origin` and attach **your** project remote so your client/custom addons stay on your branch.
+
+```bash
+# 1) Clone the template
+git clone git@github.com:ProjectMeru/sumeru_custom_addons.git
+cd sumeru_custom_addons
+
+# 2) Ready the workspace (siblings sumeru / sumeru_addons must exist)
+cp sumeru.conf.example sumeru.conf
+# edit db_* and paths in sumeru.conf
+make replace-sumeru SUMERU_ROOT=../sumeru
+make replace-sumeru-addons ADDONS_ROOT=../sumeru_addons
+make generate
+
+# 3) Detach from template upstream; attach your project remote
+git remote remove origin
+git remote add origin git@github.com:YOUR_ORG/YOUR_CLIENT_ADDONS.git
+git push -u origin main
+# or: git checkout -b your-branch && git push -u origin your-branch
+
+# 4) Day-to-day: keep core updated, develop and push only here
+cd ../sumeru && git pull
+cd ../sumeru_addons && git pull
+cd ../sumeru_custom_addons && make generate
+# commit and push this repo to your origin
+```
+
+Do **not** commit changes into `sumeru` or `sumeru_addons` for client work — those stay read-only and updatable via `git pull`.
+
+## Developing custom addons
+
+Create modules under `addons/<technical_name>/` with the usual layout (`manifest.json`, `init.go`, models, views, security). Sample modules in this repo:
+
+- **`my_module`** — example application module
+- **`student`** — Student Management sample app
+
+Ensure `./addons` is on `addons_path` (see `sumeru.conf.example`), e.g.:
+
+```ini
+addons_path = ../sumeru/addons,../sumeru_addons,./addons
+```
+
+After adding or removing an addon, run **`make generate`** so `addonimports/zimports.go` picks up the blank imports.
+
+Install / update examples:
+
+```bash
+go run . -- -c sumeru.conf -i my_module,student --stop-after-init
+go run . -- -c sumeru.conf -u my_module --stop-after-init
+```
+
+## Keeping upstream updated
+
+```bash
+cd ../sumeru && git pull
+cd ../sumeru_addons && git pull
+cd ../sumeru_custom_addons && make generate
+```
+
+Then continue development and push **only** this repo to your project `origin`.
 
 ---
 
@@ -54,41 +143,41 @@ make help           # short target list
 
 Variables (override on the command line, e.g. `make run CONF=/path/to/other.conf`, or put them in **`config.mk`** copied from **`config.mk.example`**):
 
-| Variable              | Default                              | Purpose                                                                                                                                                           |
-| --------------------- | ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`SUMERU_ROOT`**     | `../sumeru`                          | **`sumeru`** checkout (`module sumeru`); used for **`go run …/cmd/sumeru-import-gen -root`** and **`make replace-sumeru`**.                                       |
-| **`ADDONS_ROOT`**     | `../sumeru_addons`                   | **`sumeru_addons`** checkout (`module sumeru_addons`); used for **`make replace-sumeru-addons`** (addon discovery still comes from **`addons_path`** in the INI). |
-| **`CONF`**            | `sumeru.conf`                        | INI passed to **`go run . -- -c`** and used by **`make generate`** (resolved to **`$(CURDIR)/$(CONF)`** when not absolute).                                       |
-| **`OUT`**             | `$(CURDIR)/addonimports/zimports.go` | Absolute output path for generated imports so files are **never** written under **`../sumeru`** by mistake.                                                       |
-| **`EXTRA_RUN_FLAGS`** | _(empty)_                            | Appended to **`go run . --`** in **`make run`** (e.g. `EXTRA_RUN_FLAGS='-p 9090 -i sales'`).                                                                      |
+| Variable | Default | Purpose |
+| --- | --- | --- |
+| **`SUMERU_ROOT`** | `../sumeru` | **`sumeru`** checkout (`module sumeru`); used for import-gen and **`make replace-sumeru`**. |
+| **`ADDONS_ROOT`** | `../sumeru_addons` | **`sumeru_addons`** checkout; used for **`make replace-sumeru-addons`**. Addon discovery still comes from **`addons_path`** in the INI. |
+| **`CONF`** | `sumeru.conf` | INI for **`go run . -- -c`** and **`make generate`**. |
+| **`OUT`** | `$(CURDIR)/addonimports/zimports.go` | Absolute output path for generated imports. |
+| **`EXTRA_RUN_FLAGS`** | _(empty)_ | Appended to **`go run . --`** in **`make run`** (e.g. `EXTRA_RUN_FLAGS='-p 9090 -i sales'`). |
 
 Targets:
 
-| Target                           | Purpose                                                                                                |
-| -------------------------------- | ------------------------------------------------------------------------------------------------------ |
-| **`make generate`**              | Refresh **`addonimports/zimports.go`** from **`CONF`** (`addons_path`, etc.).                          |
-| **`make run`**                   | **`generate`** then start the server with **`-c $(CONF)`**.                                            |
-| **`make replace-sumeru`**        | Set **`go.mod`** `replace sumeru => …` from **`SUMERU_ROOT`**, then **`go mod tidy`**.                 |
-| **`make replace-sumeru-addons`** | Set **`go.mod`** `replace sumeru_addons => …` from **`ADDONS_ROOT`**, then **`go mod tidy`**.          |
-| **`make show-sumeru`**           | Print **`SUMERU_ROOT`**, **`ADDONS_ROOT`**, resolved paths, and **`replace`** lines from **`go.mod`**. |
-| **`make help`**                  | Summarize variables and targets.                                                                       |
+| Target | Purpose |
+| --- | --- |
+| **`make generate`** | Refresh **`addonimports/zimports.go`** from **`CONF`**. |
+| **`make run`** | **`generate`** then start the server with **`-c $(CONF)`**. |
+| **`make replace-sumeru`** | Set **`go.mod`** `replace sumeru => …`, then **`go mod tidy`**. |
+| **`make replace-sumeru-addons`** | Set **`go.mod`** `replace sumeru_addons => …`, then **`go mod tidy`**. |
+| **`make show-sumeru`** | Print roots, resolved paths, and **`replace`** lines. |
+| **`make help`** | Summarize variables and targets. |
 
 ---
 
 ## Server CLI flags (`go run . -- …`)
 
-Parsed by **`sumeru/core/server`**. All are optional except you must pass **`-c`** (or rely on defaults only if your process cwd and config layout match).
+Parsed by **`sumeru/core/server`**. Pass **`-c`** unless your cwd and config layout match defaults.
 
-| Flag                                               | Purpose                                                                                 |
-| -------------------------------------------------- | --------------------------------------------------------------------------------------- |
-| **`-c <path>`**                                    | Path to the INI file (e.g. **`sumeru.conf`**).                                          |
-| **`-i mod`** or **`-i mod1,mod2`**                 | **Install** listed modules after startup init.                                          |
-| **`-u mod`** or **`-u mod1,mod2`** or **`-u all`** | **Update** installed modules from disk (reload XML / metadata).                         |
-| **`-d <name>`**                                    | Override **`db_name`** from the INI for this run.                                       |
-| **`--database <name>`**                            | Same as **`-d`**; if both are set, **`--database`** wins.                               |
-| **`-p <port>`**                                    | Shorthand for HTTP port; overrides **`http_port`** in the INI.                          |
-| **`--http-port <port>`**                           | Same; if both **`-p`** and **`--http-port`** are set, **`-p`** wins.                    |
-| **`--stop-after-init`**                            | After **`-i`** / **`-u`**, exit without starting HTTP (only if module flags were used). |
+| Flag | Purpose |
+| --- | --- |
+| **`-c <path>`** | Path to the INI file (e.g. **`sumeru.conf`**). |
+| **`-i mod`** or **`-i mod1,mod2`** | **Install** listed modules after startup init. |
+| **`-u mod`** or **`-u mod1,mod2`** or **`-u all`** | **Update** installed modules from disk (reload XML / metadata). |
+| **`-d <name>`** | Override **`db_name`** from the INI for this run. |
+| **`--database <name>`** | Same as **`-d`**; if both are set, **`--database`** wins. |
+| **`-p <port>`** | HTTP port; overrides **`http_port`** in the INI. |
+| **`--http-port <port>`** | Same; if both **`-p`** and **`--http-port`** are set, **`-p`** wins. |
+| **`--stop-after-init`** | After **`-i`** / **`-u`**, exit without starting HTTP. |
 
 Examples:
 
@@ -106,54 +195,54 @@ go run . -- -c sumeru.conf -u my_module --stop-after-init
 
 Section header: **`[options]`**. Format: **`key = value`**. Lines starting with **`#`** or **`;`** are comments.
 
-Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates_path`**, **`logo_path`**, **`brand_css`**, **`log_file`**, and similar) resolve **relative values from the INI file’s directory** (unless the value is already absolute).
+Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates_path`**, **`logo_path`**, **`brand_css`**, **`log_file`**, and similar) resolve **relative values from the INI file’s directory** (unless already absolute).
 
 ### Required
 
-| Key               | Purpose                                                                                                                                                                                                     |
-| ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`db_host`**     | PostgreSQL host.                                                                                                                                                                                            |
-| **`db_port`**     | PostgreSQL port.                                                                                                                                                                                            |
-| **`db_user`**     | Database user.                                                                                                                                                                                              |
-| **`db_password`** | Database password.                                                                                                                                                                                          |
-| **`db_name`**     | Database name (overridable at runtime with **`-d`** / **`--database`**).                                                                                                                                    |
-| **`http_port`**   | HTTP listen port (overridable with **`-p`** / **`--http-port`**).                                                                                                                                           |
-| **`addons_path`** | Comma-separated directories; each immediate subfolder with **`manifest.json`** is an addon. Later roots in **`addons_path`** override the same technical module name. |
+| Key | Purpose |
+| --- | --- |
+| **`db_host`** | PostgreSQL host. |
+| **`db_port`** | PostgreSQL port. |
+| **`db_user`** | Database user. |
+| **`db_password`** | Database password. |
+| **`db_name`** | Database name (overridable with **`-d`** / **`--database`**). |
+| **`http_port`** | HTTP listen port (overridable with **`-p`** / **`--http-port`**). |
+| **`addons_path`** | Comma-separated directories; each immediate subfolder with **`manifest.json`** is an addon. Later roots override the same technical module name. |
 
 ### Optional — database
 
-| Key              | Default   | Purpose                                    |
-| ---------------- | --------- | ------------------------------------------ |
+| Key | Default | Purpose |
+| --- | --- | --- |
 | **`db_sslmode`** | `disable` | PostgreSQL **`sslmode`** (e.g. `require`). |
 
 ### Optional — workspace / paths
 
-| Key                  | Purpose                                                                                                                                                                                                                        |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`sumeru_home`**    | Directory of the standard **`sumeru`** checkout. When set, if **`assets_path`** / **`templates_path`** are omitted, defaults are under this tree. Relative → resolved from the INI directory. |
-| **`assets_path`**    | Static files (CSS/JS). Default: **`core/engine/assets`** (under **`sumeru_home`** if set, else next to INI if INI sits in a tree with **`go.mod`**, else cwd semantics — see upstream docs).                                   |
-| **`templates_path`** | HTML templates. Default: **`core/engine/templates`** (same rules).                                                                                                                                                             |
+| Key | Purpose |
+| --- | --- |
+| **`sumeru_home`** | Directory of the standard **`sumeru`** checkout. When set, omitted **`assets_path`** / **`templates_path`** default under this tree. |
+| **`assets_path`** | Static files (CSS/JS). Default: **`core/engine/assets`** under **`sumeru_home`** when set. |
+| **`templates_path`** | HTML templates. Default: **`core/engine/templates`** (same rules). |
 
 ### Optional — branding
 
-| Key                        | Purpose                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| **`logo_path`**            | Image served at **`/static/app-logo`**.                                                      |
+| Key | Purpose |
+| --- | --- |
+| **`logo_path`** | Image served at **`/static/app-logo`**. |
 | **`company_display_name`** | Header chip; if empty and **`company`** is installed, first **`core.company`** name is used. |
-| **`user_display_name`**    | Header label; if empty and **`user`** is installed, first **`core.user`** display is used.   |
-| **`brand_css`**            | Extra CSS linked as **`/static/brand.css`** after view stylesheets.                          |
+| **`user_display_name`** | Header label; if empty and **`user`** is installed, first **`core.user`** display is used. |
+| **`brand_css`** | Extra CSS linked as **`/static/brand.css`** after view stylesheets. |
 
 ### Optional — logging (Zap JSON + optional lumberjack)
 
-| Key                    | Purpose                                                                                                                                                                      |
-| ---------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **`log_stdout`**       | Default **true** — emit JSON logs to **stdout** (typical for Kubernetes log collectors).                                                                                     |
-| **`log_file`**         | Optional second sink; path is absolutized from the INI directory. Parent directories are created.                                                                            |
-| **`log_rolling`**      | **false** (default) = append-only file. **true** = size-based rotation via **lumberjack** (typical VPS). Use **false** when the platform manages rotation (e.g. Kubernetes). |
-| **`log_max_size_mb`**  | Rotate after this many MB per file (default **100** when rolling is on and this is **0**).                                                                                   |
-| **`log_max_backups`**  | Number of rotated files to keep.                                                                                                                                             |
-| **`log_max_age_days`** | Delete rotated files older than **N** days (**0** = no age-based pruning).                                                                                                   |
-| **`dev_mode`**         | **true** → Zap **debug** level and other dev-only behavior in core.                                                                                                          |
+| Key | Purpose |
+| --- | --- |
+| **`log_stdout`** | Default **true** — emit JSON logs to **stdout**. |
+| **`log_file`** | Optional second sink; path absolutized from the INI directory. |
+| **`log_rolling`** | **false** = append-only; **true** = size-based rotation (lumberjack). |
+| **`log_max_size_mb`** | Rotate after this many MB per file (default **100** when rolling is on and this is **0**). |
+| **`log_max_backups`** | Number of rotated files to keep. |
+| **`log_max_age_days`** | Delete rotated files older than **N** days (**0** = no age-based pruning). |
+| **`dev_mode`** | **true** → Zap **debug** level and other dev-only behavior in core. |
 
 Full annotated list (core-only defaults): **`../sumeru/sumeru.conf.example`**.
 
@@ -165,20 +254,9 @@ Invoked as:
 
 `go run $(SUMERU_ROOT)/cmd/sumeru-import-gen -root $(SUMERU_ROOT) -config <absolute-CONF> -out $(OUT) -package addonimports`
 
-| Flag           | Purpose                                                                                |
-| -------------- | -------------------------------------------------------------------------------------- |
-| **`-root`**    | Standard **`sumeru`** repo root (directory whose **`go.mod`** is **`module sumeru`**). |
-| **`-config`**  | Absolute path to the INI whose **`addons_path`** / **`sumeru_home`** define discovery. |
-| **`-out`**     | Generated `.go` file path (absolute **`OUT`** in this Makefile).                       |
-| **`-package`** | Go package name inside that file (here **`addonimports`**).                            |
-
----
-
-## Custom addons in this repo
-
-Sample modules live under **`addons/`**:
-
-- **`acme_demo`** — example app with a root menu entry.
-- **`workspace_notes`** — second example (`application: false` in manifest).
-
-List them on **`addons_path`** in order, e.g. **`../sumeru/addons,../sumeru_addons,./addons`** (see **`sumeru.conf.example`**), and run **`make generate`** so **`addonimports/zimports.go`** picks up **`sumeru/...`**, **`sumeru_addons/...`**, and **`sumeru_custom_addons/addons/...`** imports as needed.
+| Flag | Purpose |
+| --- | --- |
+| **`-root`** | Standard **`sumeru`** repo root (`module sumeru`). |
+| **`-config`** | Absolute path to the INI whose **`addons_path`** / **`sumeru_home`** define discovery. |
+| **`-out`** | Generated `.go` file path (absolute **`OUT`** in this Makefile). |
+| **`-package`** | Go package name inside that file (here **`addonimports`**). |
