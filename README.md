@@ -260,3 +260,11 @@ Invoked as:
 | **`-config`** | Absolute path to the INI whose **`addons_path`** / **`sumeru_home`** define discovery. |
 | **`-out`** | Generated `.go` file path (absolute **`OUT`** in this Makefile). |
 | **`-package`** | Go package name inside that file (here **`addonimports`**). |
+
+## Documentation
+
+| Resource | Contents |
+| -------- | -------- |
+| This README | Workspace runner, `make generate`, custom addons |
+| [`sumeru/README.md`](https://github.com/ProjectMeru/sumeru/blob/main/README.md) | Core engine, config, CLI |
+| [`sumeru_addons/README.md`](https://github.com/ProjectMeru/sumeru_addons/blob/main/README.md) | Standard business addon module |
