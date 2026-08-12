@@ -14,4 +14,5 @@ require (
 	go.uber.org/zap v1.27.0 // indirect
 	golang.org/x/crypto v0.51.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
+	sumeru_addons v0.0.0-00010101000000-000000000000 // indirect
 )
