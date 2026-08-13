@@ -1,82 +1,149 @@
-# Optional local overrides (gitignored): SUMERU_ROOT, CONF, OUT, etc.
+# Sumeru custom-addons workspace — wire go.mod, generate imports, install/update, run ERP.
+# Local overrides: cp config.mk.example config.mk  (gitignored)
+# CLI mapping: MODULES → -i/-u, DB → -d, EXTRA_RUN_FLAGS → -p and other flags
+
 -include config.mk
 
-.PHONY: generate run help replace-sumeru replace-sumeru-addons show-sumeru
+.DEFAULT_GOAL := help
 
-# Path to the standard sumeru Go module (directory containing go.mod).
-# Default: sibling ../sumeru.
-#
-# Prod (absolute install, stable path):
-#   make replace-sumeru SUMERU_ROOT=/opt/sumeru
-#
-# Dev (clone anywhere; keep a relative segment in go.mod):
-#   make replace-sumeru SUMERU_ROOT=../sumeru
-#   make replace-sumeru SUMERU_ROOT=../../projects/sumeru
-#
-# Or set SUMERU_ROOT once in config.mk (see config.mk.example).
-SUMERU_ROOT ?= ../sumeru
+# --- Configurable (override: make run DB=sumeru_test MODULES=…) ---
+SUMERU_ROOT     ?= ../sumeru
+ADDONS_ROOT     ?= ../sumeru_addons
+CONF            ?= sumeru.conf
+OUT             ?= $(CURDIR)/addonimports/zimports.go
+DB              ?=
+MODULES         ?=
+EXTRA_RUN_FLAGS ?=
 
-# Standard business addons module (directory containing go.mod module sumeru_addons).
-ADDONS_ROOT ?= ../sumeru_addons
+# --- Resolved paths ---
+CONF_ABS := $(if $(filter /%,$(CONF)),$(CONF),$(CURDIR)/$(CONF))
+SUMERU_ABS := $(shell cd "$(SUMERU_ROOT)" 2>/dev/null && pwd)
+ADDONS_ABS := $(shell cd "$(ADDONS_ROOT)" 2>/dev/null && pwd)
+REPLACE_SUMERU        := $(if $(filter /%,$(SUMERU_ROOT)),$(SUMERU_ABS),$(SUMERU_ROOT))
+REPLACE_SUMERU_ADDONS := $(if $(filter /%,$(ADDONS_ROOT)),$(ADDONS_ABS),$(ADDONS_ROOT))
 
-CONF ?= sumeru.conf
-# Absolute path: -out is relative to SUMERU_ROOT when not absolute (see sumeru-import-gen).
-OUT ?= $(CURDIR)/addonimports/zimports.go
+RUN := go run . -- -c $(CONF)
 
-# import-gen resolves a relative -config against SUMERU_ROOT; workspace INI lives here → absolute.
-CONF_FOR_GEN := $(if $(filter /%,$(CONF)),$(CONF),$(CURDIR)/$(CONF))
+# Optional -d and extra flags (-p, etc.)
+RUN_FLAGS :=
+ifneq ($(strip $(DB)),)
+RUN_FLAGS += -d $(DB)
+endif
+RUN_FLAGS += $(EXTRA_RUN_FLAGS)
 
-# Resolved standard tree (must exist) for import-gen -root and go run …/cmd.
-SUMERU_ROOT_ABS := $(shell cd "$(SUMERU_ROOT)" 2>/dev/null && pwd || echo "")
+.PHONY: help setup conf paths show-sumeru wire replace-sumeru replace-sumeru-addons \
+        generate run build install update sync i u cli tidy
 
-ADDONS_ROOT_ABS := $(shell cd "$(ADDONS_ROOT)" 2>/dev/null && pwd || echo "")
+help:
+	@echo "Variables: SUMERU_ROOT ADDONS_ROOT CONF OUT DB MODULES EXTRA_RUN_FLAGS"
+	@echo "           (optional config.mk — see config.mk.example)"
+	@echo ""
+	@echo "Flag mapping (same as go run . -- …):"
+	@echo "  MODULES=x     →  -i x (install) or -u x (update)"
+	@echo "  DB=name       →  -d name  (override db_name in INI for this run)"
+	@echo "  EXTRA_RUN_FLAGS='-p 9090'  →  other CLI flags"
+	@echo ""
+	@echo "Bootstrap:"
+	@echo "  make conf              copy sumeru.conf.example → sumeru.conf if missing"
+	@echo "  make setup             conf + wire go.mod + generate (first-time / after clone)"
+	@echo ""
+	@echo "Day-to-day:"
+	@echo "  make run [DB=name]               generate + start HTTP server"
+	@echo "  make generate                    refresh addonimports/zimports.go"
+	@echo "  make build                       generate + build bin/sumeru-erp"
+	@echo "  make install MODULES=x [DB=name] install (-i), then exit"
+	@echo "  make update  MODULES=x [DB=name] update (-u), then exit"
+	@echo "  make i / make u                  short aliases for install / update"
+	@echo "  make sync  MODULES=x [DB=name]   install then update same modules"
+	@echo "  make cli [EXTRA_RUN_FLAGS='…']   arbitrary flags (add --stop-after-init for -i/-u)"
+	@echo ""
+	@echo "Update (-u) semantics:"
+	@echo "  MODULES=all          every installed module on disk"
+	@echo "  MODULES=mod1,mod2    only those names; not installed → skip silently"
+	@echo ""
+	@echo "go.mod:"
+	@echo "  make wire              replace sumeru + sumeru_addons, then tidy"
+	@echo "  make replace-sumeru    replace sumeru only"
+	@echo "  make replace-sumeru-addons  replace sumeru_addons only"
+	@echo "  make tidy              go mod tidy"
+	@echo ""
+	@echo "Inspect:  make paths"
+	@echo ""
+	@echo "Examples:"
+	@echo "  make setup"
+	@echo "  make run DB=sumeru_staging"
+	@echo "  make install MODULES=my_module,student"
+	@echo "  make update  MODULES=all"
+	@echo "  make update  MODULES=contacts,student DB=sumeru_dev"
+	@echo ""
+	@echo "Raw CLI (after make generate):"
+	@echo "  go run . -- -c $(CONF) -i my_module --stop-after-init"
+	@echo "  go run . -- -c $(CONF) -u all --stop-after-init"
+	@echo "  go run . -- -c $(CONF) -d sumeru_test -p 9090"
 
-# go.mod replace target: absolute for prod-style SUMERU_ROOT, else keep the path literal (portable dev).
-REPLACE_SUMERU := $(if $(filter /%,$(SUMERU_ROOT)),$(SUMERU_ROOT_ABS),$(SUMERU_ROOT))
+# --- Checks ---
+check-sumeru:
+	@test -n "$(SUMERU_ABS)" || (echo "SUMERU_ROOT=$(SUMERU_ROOT): directory not found" >&2; exit 1)
 
-REPLACE_SUMERU_ADDONS := $(if $(filter /%,$(ADDONS_ROOT)),$(ADDONS_ROOT_ABS),$(ADDONS_ROOT))
+check-addons:
+	@test -n "$(ADDONS_ABS)" || (echo "ADDONS_ROOT=$(ADDONS_ROOT): directory not found" >&2; exit 1)
 
-# Core UI styles are plain CSS under $(SUMERU_ROOT)/core/engine/assets/css/ (see sumeru-theme.css).
+# --- Bootstrap ---
+conf:
+	@test -f "$(CONF)" || cp sumeru.conf.example "$(CONF)"
+	@test -f "$(CONF)" && echo "using $(CONF)" || (echo "failed to create $(CONF)" >&2; exit 1)
 
-# Regenerate blank imports from addons_path in CONF (see sumeru.conf.example).
-generate:
-	@test -n "$(SUMERU_ROOT_ABS)" || (echo "SUMERU_ROOT=$(SUMERU_ROOT) is not a directory; fix path or see: make help" >&2 && exit 1)
-	go run $(SUMERU_ROOT_ABS)/cmd/sumeru-import-gen -root $(SUMERU_ROOT_ABS) -config $(CONF_FOR_GEN) -out $(OUT) -package addonimports
+setup: conf wire generate
 
-	@echo "go.mod: replace sumeru => $(REPLACE_SUMERU)"
+# --- go.mod wiring ---
+wire: replace-sumeru replace-sumeru-addons
 
-# Set go.mod: replace sumeru => $(REPLACE_SUMERU), then go mod tidy.
-replace-sumeru:
-	@test -n "$(SUMERU_ROOT_ABS)" || (echo "SUMERU_ROOT=$(SUMERU_ROOT): no such directory" >&2 && exit 1)
+replace-sumeru: check-sumeru
 	go mod edit -replace sumeru=$(REPLACE_SUMERU)
 	go mod tidy
 	@echo "go.mod: replace sumeru => $(REPLACE_SUMERU)"
 
-replace-sumeru-addons:
-	@test -n "$(ADDONS_ROOT_ABS)" || (echo "ADDONS_ROOT=$(ADDONS_ROOT): no such directory" >&2 && exit 1)
+replace-sumeru-addons: check-addons
 	go mod edit -replace sumeru_addons=$(REPLACE_SUMERU_ADDONS)
 	go mod tidy
 	@echo "go.mod: replace sumeru_addons => $(REPLACE_SUMERU_ADDONS)"
 
-show-sumeru:
-	@echo "SUMERU_ROOT=$(SUMERU_ROOT)"
-	@echo "resolved tree: $(SUMERU_ROOT_ABS)"
-	@echo "ADDONS_ROOT=$(ADDONS_ROOT)"
-	@echo "resolved addons: $(ADDONS_ROOT_ABS)"
-	@echo "replace sumeru: $(REPLACE_SUMERU)"
-	@echo "replace sumeru_addons: $(REPLACE_SUMERU_ADDONS)"
-	@grep '^replace sumeru' go.mod || true
+tidy:
+	go mod tidy
 
-# Dev server: regenerate imports then run this module’s main.
+# --- Generate & run ---
+generate: check-sumeru
+	go run $(SUMERU_ABS)/cmd/sumeru-import-gen \
+		-root $(SUMERU_ABS) -config $(CONF_ABS) -out $(OUT) -package addonimports
+
 run: generate
-	go run . -- -c $(CONF) $(EXTRA_RUN_FLAGS)
+	$(RUN) $(RUN_FLAGS)
 
-help:
-	@echo "Variables: SUMERU_ROOT, ADDONS_ROOT, CONF, OUT. Optional config.mk — see config.mk.example"
-	@echo "Targets:"
-	@echo "  make replace-sumeru        - write go.mod replace sumeru => path; tidy"
-	@echo "  make replace-sumeru-addons - write go.mod replace sumeru_addons => path; tidy"
-	@echo "  make show-sumeru           - print SUMERU_ROOT, resolved path, and go.mod replace line"
-	@echo "  make generate        - refresh addonimports/zimports.go (uses CONF in this dir by default)"
-	@echo "  make run             - generate then go run . -- -c $(CONF)"
-	@echo "  copy sumeru.conf.example to sumeru.conf and adjust paths first."
+build: generate
+	@mkdir -p bin
+	go build -o bin/sumeru-erp .
+
+install i: generate
+	@test -n "$(MODULES)" || (echo 'usage: make install MODULES=my_module[,other]  (alias: make i)' >&2; exit 1)
+	$(RUN) -i $(MODULES) --stop-after-init $(RUN_FLAGS)
+
+update u: generate
+	@test -n "$(MODULES)" || (echo 'usage: make update MODULES=my_module  or  MODULES=all  (alias: make u)' >&2; exit 1)
+	$(RUN) -u $(MODULES) --stop-after-init $(RUN_FLAGS)
+
+sync: generate
+	@test -n "$(MODULES)" || (echo 'usage: make sync MODULES=my_module[,other]' >&2; exit 1)
+	$(RUN) -i $(MODULES) -u $(MODULES) --stop-after-init $(RUN_FLAGS)
+
+cli: generate
+	$(RUN) $(RUN_FLAGS)
+
+# --- Inspect ---
+paths show-sumeru:
+	@echo "CONF=$(CONF)"
+	@echo "DB=$(if $(strip $(DB)),$(DB),(from INI db_name))"
+	@echo "SUMERU_ROOT=$(SUMERU_ROOT)  →  $(SUMERU_ABS)"
+	@echo "ADDONS_ROOT=$(ADDONS_ROOT)  →  $(ADDONS_ABS)"
+	@echo "replace sumeru        => $(REPLACE_SUMERU)"
+	@echo "replace sumeru_addons => $(REPLACE_SUMERU_ADDONS)"
+	@grep '^replace sumeru' go.mod 2>/dev/null || true

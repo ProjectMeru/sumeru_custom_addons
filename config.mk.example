@@ -1,10 +1,13 @@
-# Copy to config.mk (gitignored) to pin the standard Sumeru tree without editing the repo Makefile.
+# Local Makefile overrides (gitignored). Copy to config.mk and edit.
 #
-# Monorepo sibling (default is already ../sumeru in Makefile):
+# Monorepo siblings (defaults — uncomment only if different):
 # SUMERU_ROOT = ../sumeru
+# ADDONS_ROOT = ../sumeru_addons
+# CONF = sumeru.conf
 #
-# Production checkout:
+# Production:
 # SUMERU_ROOT = /opt/sumeru
+# ADDONS_ROOT = /opt/sumeru_addons
 #
-# Dev: clone path (then run: make replace-sumeru)
-# SUMERU_ROOT = $(HOME)/src/sumeru
+# Default database override for every make run/install/update:
+# DB = sumeru_dev
