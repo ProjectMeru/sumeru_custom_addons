@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_my_module_tag_list" model="my.module.tag" type="list">
+            <field name="name"/>
+            <field name="color"/>
+        </view>
+    </data>
+</sumeru>

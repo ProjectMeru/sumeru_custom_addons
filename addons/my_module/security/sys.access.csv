@@ -1,3 +1,7 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_my_module_user,my_module.user,my.module,group_my_module_user,1,0,0,0
 access_my_module_manager,my_module.manager,my.module,group_my_module_manager,1,1,1,1
+access_my_module_line_user,my_module.line.user,my.module.line,group_my_module_user,1,0,0,0
+access_my_module_line_manager,my_module.line.manager,my.module.line,group_my_module_manager,1,1,1,1
+access_my_module_tag_user,my_module.tag.user,my.module.tag,group_my_module_user,1,0,0,0
+access_my_module_tag_manager,my_module.tag.manager,my.module.tag,group_my_module_manager,1,1,1,1

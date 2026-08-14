@@ -3,7 +3,7 @@
   "display_name": "My Module",
   "version": "1.0.0",
   "author": "Your Company",
-  "description": "Premium standard module for Sumeru ERP.",
+  "description": "Developer reference: all field types, widgets, and view tags.",
   "depends": ["base"],
   "application": true,
   "data": [
@@ -11,8 +11,9 @@
     "security/sys.access.csv",
     "views/actions.xml",
     "views/form_view.xml",
-    "views/tree_view.xml",
+    "views/list_view.xml",
     "views/kanban_view.xml",
+    "views/tag_list_view.xml",
     "views/menus.xml"
   ]
 }

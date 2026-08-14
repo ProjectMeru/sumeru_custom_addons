@@ -2,7 +2,7 @@
 <sumeru>
     <data>
         <!-- Window Action -->
-        <action id="action_my_module" type="window" model="my.module" name="My Module" view_mode="tree,form,kanban">
+        <action id="action_my_module" type="window" model="my.module" name="My Module" view_mode="list,form,kanban">
             <help>
                 <p class="sum-view-nocontent-smiling-face">
                     Create your first My Module!

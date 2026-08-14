@@ -2,21 +2,13 @@
 <sumeru>
     <data>
         <view id="view_my_module_kanban" model="my.module" type="kanban">
+            <field name="image" widget="circle"/>
             <field name="name"/>
-            <templates>
-                <t t-name="kanban-box">
-                    <div class="sum-kanban-global-click">
-                        <div class="sum-kanban-details">
-                            <strong class="sum-kanban-record-title">
-                                <field name="name"/>
-                            </strong>
-                            <div>
-                                <field name="description"/>
-                            </div>
-                        </div>
-                    </div>
-                </t>
-            </templates>
+            <field name="reference"/>
+            <field name="state"/>
+            <field name="priority"/>
+            <field name="amount"/>
+            <field name="active"/>
         </view>
     </data>
 </sumeru>

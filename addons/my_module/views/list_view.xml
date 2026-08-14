@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <!-- open="false" disables row click → form navigation (default is true) -->
+        <view id="view_my_module_list" model="my.module" type="list">
+            <field name="sequence" widget="handle"/>
+            <field name="name"/>
+            <field name="reference"/>
+            <field name="state"/>
+            <field name="priority"/>
+            <field name="company_id"/>
+            <field name="user_id"/>
+            <field name="date_start"/>
+            <field name="amount"/>
+            <field name="price"/>
+            <field name="active" widget="boolean_toggle"/>
+        </view>
+    </data>
+</sumeru>
