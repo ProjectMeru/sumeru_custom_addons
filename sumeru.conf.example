@@ -13,6 +13,7 @@ db_sslmode = disable
 
 # HTTP (required)
 http_port = 8080
+# http_interface = 127.0.0.1
 dev_mode = true
 
 # Setup wizard — first run only; leave setup_token empty to skip
