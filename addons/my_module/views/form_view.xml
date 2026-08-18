@@ -3,68 +3,79 @@
     <data>
         <view id="view_my_module_form" model="my.module" type="form">
             <header>
-                <button name="action_confirm" string="Confirm" type="object" class="sum_highlight"/>
-                <button name="action_done" string="Done" type="object" class=""/>
-                <button name="action_reset_draft" string="Reset to Draft" type="object" class=""/>
-                <field name="state" widget="statusbar"/>
+                <button name="action_confirm" string="Confirm" type="object" class="sum_highlight" />
+                <button name="action_done" string="Done" type="object" class="" />
+                <button name="action_reset_draft" string="Reset to Draft" type="object" class="" />
+                <field name="state" widget="statusbar" />
             </header>
             <sheet>
                 <div class="sum_title">
                     <h1>
-                        <field name="name" placeholder="Title..."/>
+                        <field name="name" placeholder="Title..." />
                     </h1>
                 </div>
                 <group>
                     <group string="Scalars">
-                        <field name="reference" string="Reference"/>
-                        <field name="priority" string="Priority"/>
-                        <field name="quantity" string="Quantity"/>
-                        <field name="progress_pct" string="Progress %"/>
-                        <field name="amount" string="Amount"/>
-                        <field name="price" string="Price"/>
+                        <field name="reference" string="Reference" />
+                        <field name="priority" string="Priority" />
+                        <field name="quantity" string="Quantity" />
+                        <field name="progress_pct" string="Progress %" />
+                        <field name="amount" string="Amount" />
+                        <field name="price" string="Price" />
                     </group>
                     <group string="Dates and flags">
-                        <field name="date_start" string="Start Date"/>
-                        <field name="datetime_due" string="Due Date"/>
-                        <field name="active" string="Active" widget="radio"/>
-                        <field name="sequence" string="Sequence"/>
+                        <field name="date_start" string="Start Date" />
+                        <field name="datetime_due" string="Due Date" />
+                        <field name="active" string="Active" widget="radio" />
+                        <field name="sequence" string="Sequence" />
                     </group>
                 </group>
                 <group>
                     <group string="Relations">
-                        <field name="company_id" string="Company" widget="selection"/>
-                        <field name="user_id" string="Responsible" widget="selection"/>
+                        <field name="company_id" string="Company" widget="selection" />
+                        <field name="user_id" string="Responsible" widget="selection" />
                     </group>
                     <group string="Geo cascade">
-                        <field name="country_id" string="Country" widget="selection"/>
-                        <field name="state_id" string="State" widget="selection"/>
-                        <field name="city_id" string="City" widget="selection"/>
+                        <field name="country_id" string="Country" widget="selection" />
+                        <field name="state_id" string="State" widget="selection" />
+                        <field name="city_id" string="City" widget="selection" />
                     </group>
                 </group>
                 <group string="Contact and media">
-                    <field name="email" string="Email" widget="email"/>
-                    <field name="phone" string="Phone" widget="phone"/>
-                    <field name="image" string="Image" widget="image"/>
+                    <group string="Contact">
+                        <field name="email" string="Email" widget="email" />
+                        <field name="phone" string="Phone" widget="phone" />
+                    </group>
+                    <group string="Media">
+                        <field name="image" string="Image" widget="image" />
+                    </group>
                 </group>
                 <notebook>
                     <page string="Description" name="description">
-                        <field name="description" placeholder="Internal notes..."/>
+                        <field name="description" placeholder="Internal notes..." />
                     </page>
                     <page string="Tags" name="tags">
-                        <field name="tag_ids" widget="many2many_tags"/>
+                        <field name="tag_ids" widget="many2many_tags" />
                     </page>
                     <page string="Lines" name="lines">
-                        <field name="line_ids"/>
+                        <field name="line_ids">
+                            <list editable="bottom">
+                                <field name="name" />
+                                <field name="quantity" />
+                                <field name="unit_price" />
+                                <field name="note" />
+                            </list>
+                        </field>
                     </page>
                     <page string="JSON" name="json">
-                        <field name="metadata_json"/>
+                        <field name="metadata_json" />
                     </page>
                 </notebook>
-                <separator string="Label example"/>
-                <label for="email" string="Email is rendered above with widget=email"/>
+                <separator string="Label example" />
+                <label for="email" string="Email is rendered above with widget=email" />
             </sheet>
             <footer>
-                <button name="action_confirm" string="Confirm" type="object" class=""/>
+                <button name="action_confirm" string="Confirm" type="object" class="" />
             </footer>
         </view>
     </data>
