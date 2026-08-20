@@ -2,12 +2,12 @@
 <sumeru>
     <data>
         <view id="view_my_module_kanban" model="my.module" type="kanban">
-            <field name="image" widget="circle"/>
+            <field name="avatar" widget="circle"/>
             <field name="name"/>
             <field name="reference"/>
             <field name="state"/>
             <field name="priority"/>
-            <field name="amount"/>
+            <field name="subtotal"/>
             <field name="active"/>
         </view>
     </data>

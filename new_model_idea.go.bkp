@@ -1,0 +1,487 @@
+package models
+
+import "sumeru/core/sdk"
+
+// Priority is a type-safe selection value.
+// The key is stored in the database; Sumeru generates the UI label.
+type Priority string
+
+const (
+	PriorityLow    Priority = "low"
+	PriorityNormal Priority = "normal"
+	PriorityHigh   Priority = "high"
+)
+
+// State is a type-safe workflow selection.
+type State string
+
+const (
+	StateDraft     State = "draft"
+	StateConfirmed State = "confirmed"
+	StateDone      State = "done"
+)
+
+// MyModule demonstrates the Sumeru model API.
+//
+// The struct itself is the model/schema definition.
+// Sumeru discovers models automatically, so no Register() or init()
+// function is required.
+type MyModule struct {
+	sdk.Model `sumeru:"model=my.module"`
+
+	// -------------------------------------------------------------------------
+	// STRING / TEXT
+	// -------------------------------------------------------------------------
+
+	// Simple string. Sumeru derives the UI label as "Name".
+	Name sdk.String
+
+	// Required and indexed for fast lookup.
+	Reference sdk.String `sumeru:"required,index"`
+
+	// Custom database column name.
+	ExternalCode sdk.String `sumeru:"column=external_ref,index"`
+
+	// Database-level uniqueness constraint.
+	SerialNumber sdk.String `sumeru:"unique,index"`
+
+	// Limits the maximum string length.
+	ShortCode sdk.String `sumeru:"size=32"`
+
+	// Human-readable application text can participate in translations.
+	Title sdk.String `sumeru:"translate"`
+
+	// Long-form text.
+	Description sdk.Text
+
+	// Long-form translated text.
+	InternalNotes sdk.Text `sumeru:"translate"`
+
+	// -------------------------------------------------------------------------
+	// HTML
+	// -------------------------------------------------------------------------
+
+	// HTML is sanitized by the SDK/security layer.
+	Notes sdk.HTML
+
+	// Power-user HTML configuration.
+	Terms sdk.HTML `sumeru:"sanitize=true,max_length=10000"`
+
+	// -------------------------------------------------------------------------
+	// BOOLEAN
+	// -------------------------------------------------------------------------
+
+	Active sdk.Boolean
+
+	// Default value for newly created records.
+	Verified sdk.Boolean `sumeru:"default=true"`
+
+	// Indexed because this field may frequently be used in filters.
+	Archived sdk.Boolean `sumeru:"default=false,index"`
+
+	// -------------------------------------------------------------------------
+	// INTEGER
+	// -------------------------------------------------------------------------
+
+	Quantity sdk.Integer
+
+	// Required field with a default.
+	Sequence sdk.Integer `sumeru:"required,default=10"`
+
+	// Range validation.
+	Progress sdk.Integer `sumeru:"index,min=0,max=100"`
+
+	// Another constrained integer.
+	Rating sdk.Integer `sumeru:"min=0,max=5"`
+
+	// Existing/legacy database column.
+	LegacyID sdk.Integer `sumeru:"column=legacy_id"`
+
+	// -------------------------------------------------------------------------
+	// NUMERIC / DECIMAL
+	// -------------------------------------------------------------------------
+
+	// Exact decimal number.
+	Amount sdk.Numeric
+
+	// Typical financial amount.
+	Price sdk.Numeric `sumeru:"precision=18,scale=2"`
+
+	// Percentage/rate requiring more decimal places.
+	TaxRate sdk.Numeric `sumeru:"precision=20,scale=8"`
+
+	// Enterprise value with high precision.
+	ExchangeRate sdk.Numeric `sumeru:"precision=40,scale=18"`
+
+	// Very high precision scientific/business calculation.
+	ScientificValue sdk.Numeric `sumeru:"precision=50,scale=30"`
+
+	// Precision means total digits.
+	// Scale means digits after the decimal point.
+	Balance sdk.Numeric `sumeru:"required,default=0,precision=40,scale=18"`
+
+	// -------------------------------------------------------------------------
+	// MONEY
+	// -------------------------------------------------------------------------
+
+	// Money is an exact decimal value with currency-aware ORM/UI behavior.
+	Total sdk.Money `sumeru:"currency=Currency"`
+
+	Subtotal sdk.Money `sumeru:"currency=Currency"`
+
+	TaxAmount sdk.Money `sumeru:"currency=Currency"`
+
+	// Currency used by the Money fields above.
+	Currency sdk.Many2One[core.Currency]
+
+	// -------------------------------------------------------------------------
+	// SELECTION
+	// -------------------------------------------------------------------------
+
+	// The database stores "low", "normal", or "high".
+	// The UI can display "Low", "Normal", or "High".
+	Priority sdk.Selection[Priority] `sumeru:"default=normal"`
+
+	// Type-safe workflow state.
+	State sdk.Selection[State] `sumeru:"required,default=draft"`
+
+	// -------------------------------------------------------------------------
+	// DATE
+	// -------------------------------------------------------------------------
+
+	// Date without a time component.
+	BirthDate sdk.Date
+
+	StartDate sdk.Date `sumeru:"required"`
+
+	EndDate sdk.Date
+
+	// -------------------------------------------------------------------------
+	// TIME
+	// -------------------------------------------------------------------------
+
+	// Time without a date.
+	OpeningTime sdk.Time
+
+	ClosingTime sdk.Time
+
+	// -------------------------------------------------------------------------
+	// DATETIME
+	// -------------------------------------------------------------------------
+
+	CreatedAt sdk.DateTime
+
+	// Indexed for date-range queries.
+	DueAt sdk.DateTime `sumeru:"index"`
+
+	CompletedAt sdk.DateTime
+
+	// Explicit timezone policy.
+	ScheduledAt sdk.DateTime `sumeru:"timezone=UTC"`
+
+	// -------------------------------------------------------------------------
+	// DURATION
+	// -------------------------------------------------------------------------
+
+	// Represents an elapsed amount of time rather than a clock time.
+	ProcessingTime sdk.Duration
+
+	WorkingTime sdk.Duration
+
+	// -------------------------------------------------------------------------
+	// EMAIL / PHONE / URL
+	// -------------------------------------------------------------------------
+
+	Email sdk.Email
+
+	WorkEmail sdk.Email `sumeru:"required,index"`
+
+	Phone sdk.Phone
+
+	Mobile sdk.Phone `sumeru:"index"`
+
+	Website sdk.URL
+
+	// -------------------------------------------------------------------------
+	// UUID
+	// -------------------------------------------------------------------------
+
+	// Useful for integrations and distributed systems.
+	ExternalUUID sdk.UUID `sumeru:"unique,index"`
+
+	// Sumeru generates the UUID automatically.
+	PublicID sdk.UUID `sumeru:"default=uuid,unique"`
+
+	// -------------------------------------------------------------------------
+	// JSON
+	// -------------------------------------------------------------------------
+
+	// Arbitrary structured application data.
+	Metadata sdk.JSON
+
+	// Configuration/settings payload.
+	Settings sdk.JSON
+
+	// Explicit database column name.
+	IntegrationData sdk.JSON `sumeru:"column=integration_data"`
+
+	// Optional JSON index for databases that support it.
+	SearchData sdk.JSON `sumeru:"index=json"`
+
+	// -------------------------------------------------------------------------
+	// BINARY / FILE
+	// -------------------------------------------------------------------------
+
+	// Generic binary/file data.
+	Attachment sdk.Binary
+
+	// Storage implementation is selected by the Sumeru storage layer.
+	Document sdk.Binary `sumeru:"storage=object"`
+
+	// -------------------------------------------------------------------------
+	// IMAGE
+	// -------------------------------------------------------------------------
+
+	Image sdk.Image
+
+	Avatar sdk.Image
+
+	// Image-specific validation.
+	Logo sdk.Image `sumeru:"max_width=2048,max_height=2048"`
+
+	// -------------------------------------------------------------------------
+	// MANY2ONE
+	// -------------------------------------------------------------------------
+
+	// Normal relationship.
+	Company sdk.Many2One[core.Company]
+
+	// Cross-module relationship.
+	User sdk.Many2One[core.User]
+
+	// Cross-module HR relationship.
+	Department sdk.Many2One[hr.Department]
+
+	// Custom FK column and delete behavior.
+	Manager sdk.Many2One[Employee] `sumeru:"column=manager_id,ondelete=set_null"`
+
+	// Required relation that prevents deletion of the referenced record.
+	Country sdk.Many2One[core.Country] `sumeru:"required,ondelete=restrict"`
+
+	// Domain limits which records are selectable.
+	ActiveCompany sdk.Many2One[core.Company] `sumeru:"domain=active=true"`
+
+	// -------------------------------------------------------------------------
+	// ONE2MANY
+	// -------------------------------------------------------------------------
+
+	// Sumeru discovers the inverse Many2One automatically when possible.
+	Lines sdk.One2Many[Line]
+
+	// Cross-module relationship.
+	Salaries sdk.One2Many[payroll.Salary]
+
+	// Another cross-module relationship.
+	Documents sdk.One2Many[documents.Document]
+
+	// Explicit inverse is useful when more than one possible relation exists.
+	Addresses sdk.One2Many[Address] `sumeru:"inverse=Employee"`
+
+	// -------------------------------------------------------------------------
+	// MANY2MANY
+	// -------------------------------------------------------------------------
+
+	// Sumeru automatically manages the relation table.
+	Groups sdk.Many2Many[core.Group]
+
+	Skills sdk.Many2Many[hr.Skill]
+
+	Tags sdk.Many2Many[core.Tag]
+
+	// Power users can explicitly control the relation table.
+	Categories sdk.Many2Many[Category] `sumeru:"table=my_module_category_rel,left=my_module_id,right=category_id"`
+
+	// -------------------------------------------------------------------------
+	// SELF-REFERENCING RELATIONSHIP
+	// -------------------------------------------------------------------------
+
+	// A record can reference another record of the same model.
+	Parent sdk.Many2One[MyModule] `sumeru:"column=parent_id,ondelete=set_null"`
+
+	// Inverse side of Parent.
+	Children sdk.One2Many[MyModule] `sumeru:"inverse=Parent"`
+
+	// -------------------------------------------------------------------------
+	// DYNAMIC REFERENCE
+	// -------------------------------------------------------------------------
+
+	// Can point to a record belonging to any registered Sumeru model.
+	//
+	// Example:
+	//   account.invoice,123
+	//   sale.order,456
+	//   project.task,789
+	//
+	// Unlike Many2One, this does not represent a normal database FK.
+	Resource sdk.Reference
+
+	// -------------------------------------------------------------------------
+	// MANY2ONE REFERENCE
+	// -------------------------------------------------------------------------
+
+	// Dynamic relationship where another field identifies the target model.
+	ResourceID sdk.Many2OneReference `sumeru:"model_field=ResourceModel"`
+
+	ResourceModel sdk.String
+
+	// -------------------------------------------------------------------------
+	// RELATED FIELDS
+	// -------------------------------------------------------------------------
+
+	// Reads the value through an existing relationship.
+	CompanyName sdk.String `sumeru:"related=Company.Name"`
+
+	DepartmentName sdk.String `sumeru:"related=Department.Name"`
+
+	// Persisted related field for searching/reporting.
+	StoredCompanyName sdk.String `sumeru:"related=Company.Name,store,index"`
+
+	// -------------------------------------------------------------------------
+	// COMPUTED FIELDS
+	// -------------------------------------------------------------------------
+
+	// Calculated when requested.
+	ComputedAmount sdk.Numeric `sumeru:"compute=calculateAmount"`
+
+	// Calculated and stored in the database.
+	StoredAmount sdk.Numeric `sumeru:"compute=calculateStoredAmount,store"`
+
+	// Stored computed value that users cannot directly edit.
+	ComputedTotal sdk.Numeric `sumeru:"compute=calculateTotal,store,readonly"`
+
+	// -------------------------------------------------------------------------
+	// DEFAULTS
+	// -------------------------------------------------------------------------
+
+	// Sumeru supplies the current user automatically.
+	CreatedBy sdk.Many2One[core.User] `sumeru:"default=current_user,readonly"`
+
+	// Sumeru supplies the current company automatically.
+	CompanyDefault sdk.Many2One[core.Company] `sumeru:"default=current_company"`
+
+	// -------------------------------------------------------------------------
+	// VALIDATION
+	// -------------------------------------------------------------------------
+
+	Percentage sdk.Numeric `sumeru:"precision=10,scale=4,min=0,max=100"`
+
+	NonNegativeAmount sdk.Numeric `sumeru:"min=0"`
+
+	// -------------------------------------------------------------------------
+	// SECURITY
+	// -------------------------------------------------------------------------
+
+	// Only users belonging to the specified group can access the field.
+	Salary sdk.Money `sumeru:"currency=Currency,groups=hr.manager"`
+
+	// Sensitive information can be protected at the ORM/API layer.
+	SSN sdk.String `sumeru:"groups=hr.security_sensitive"`
+
+	// -------------------------------------------------------------------------
+	// INDEXING
+	// -------------------------------------------------------------------------
+
+	// Normal database index.
+	Code sdk.String `sumeru:"index"`
+
+	// Explicit index strategy where supported by the database adapter.
+	SearchText sdk.Text `sumeru:"index=fulltext"`
+
+	// -------------------------------------------------------------------------
+	// POWER-USER COMBINATION
+	// -------------------------------------------------------------------------
+
+	EmployeeCode sdk.String `sumeru:"column=employee_code,required,unique,index,size=32,label=Employee Code,help=Unique employee identifier"`
+}
+
+// -----------------------------------------------------------------------------
+// Supporting models
+// -----------------------------------------------------------------------------
+
+type Employee struct {
+	sdk.Model `sumeru:"model=hr.employee"`
+
+	Name sdk.String
+
+	User sdk.Many2One[core.User]
+}
+
+type Company struct {
+	sdk.Model `sumeru:"model=core.company"`
+
+	Name sdk.String
+
+	Code sdk.String `sumeru:"required,unique,index"`
+}
+
+type Line struct {
+	sdk.Model `sumeru:"model=my.module.line"`
+
+	Name sdk.String
+
+	Module sdk.Many2One[MyModule] `sumeru:"required,ondelete=cascade"`
+}
+
+type Address struct {
+	sdk.Model `sumeru:"model=hr.employee.address"`
+
+	Employee sdk.Many2One[Employee] `sumeru:"required,ondelete=cascade"`
+
+	City sdk.String
+
+	Country sdk.Many2One[core.Country]
+}
+
+type Category struct {
+	sdk.Model `sumeru:"model=my.module.category"`
+
+	Name sdk.String
+}
+
+// -----------------------------------------------------------------------------
+// Compute examples
+// -----------------------------------------------------------------------------
+
+type Invoice struct {
+	sdk.Model `sumeru:"model=account.invoice"`
+
+	Quantity sdk.Integer
+
+	Price sdk.Numeric `sumeru:"precision=40,scale=18"`
+
+	ExchangeRate sdk.Numeric `sumeru:"precision=40,scale=18"`
+
+	Discount sdk.Numeric
+
+	Tax sdk.Numeric
+
+	Subtotal sdk.Numeric `sumeru:"compute=calculateSubtotal,store"`
+
+	Total sdk.Numeric `sumeru:"compute=calculateTotal,store,readonly"`
+}
+
+// All compute methods use the same signature.
+// This keeps the SDK predictable and gives the ORM a standard error path.
+func calculateSubtotal(
+	ctx sdk.ComputeContext,
+	i *Invoice,
+) (sdk.Numeric, error) {
+	return i.Price.Mul(i.Quantity).Sub(i.Discount), nil
+}
+
+func calculateTotal(
+	ctx sdk.ComputeContext,
+	i *Invoice,
+) (sdk.Numeric, error) {
+	return i.Subtotal.Add(i.Tax), nil
+}

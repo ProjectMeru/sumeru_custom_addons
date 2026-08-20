@@ -112,7 +112,26 @@ Ensure `./addons` is on `addons_path` (see `sumeru.conf.example`), e.g.:
 addons_path = ../sumeru/addons,../sumeru_addons,./addons
 ```
 
-After adding or removing an addon, run **`make generate`** so `addonimports/zimports.go` picks up the blank imports.
+After adding or removing an addon, run **`make generate`** so `addonimports/zimports.go` picks up the blank imports and **`zrefs.go`** is refreshed for cross-module relations.
+
+### Cross-module relations (`zrefs.go`)
+
+The engine is read-only — you never edit `sumeru/core` to add comodel markers. Instead:
+
+1. List upstream modules in **`manifest.json`** → `"depends": ["base", "hr"]`
+2. Run **`make refs`** (or **`make generate`**, which runs refs first)
+3. Use generated types in your models:
+
+```go
+// models/models.go — no extra imports for depended models
+CompanyID  sdk.Many2One[CoreCompany]  // from zrefs.go
+EmployeeID sdk.Many2One[HrEmployee]   // after depends includes hr
+PartnerID  sdk.Many2One[CorePartner]  // phantom when Go name ≠ technical model
+```
+
+`tools/refs-gen` scans depended addons (transitively), reads each model’s `sumeru:"model=…"` tag, and writes **`addons/<module>/models/zrefs.go`** with type aliases (or relation phantoms when names differ, e.g. `Partner` → use `CorePartner`).
+
+Add a new dependency (e.g. `"salary"`) → run **`make refs`** again — no engine changes.
 
 Install / update (Make or raw CLI):
 
@@ -163,7 +182,8 @@ Targets:
 | **`make update MODULES=…`** / **`make u`** | `-u … --stop-after-init` |
 | **`make sync MODULES=…`** | `-i … -u … --stop-after-init` |
 | **`make cli EXTRA_RUN_FLAGS='…'`** | arbitrary flags |
-| **`make generate`** | refresh **`addonimports/zimports.go`** |
+| **`make generate`** | refresh **`addonimports/zimports.go`** + **`zrefs.go`** |
+| **`make refs`** | regenerate **`zrefs.go`** only |
 | **`make build`** | **`bin/sumeru-erp`** binary |
 | **`make wire`** | both **`replace-*`** + tidy |
 | **`make paths`** | print resolved paths |

@@ -4,7 +4,7 @@
   "version": "1.0.0",
   "author": "Your Company",
   "description": "Developer reference: all field types, widgets, and view tags.",
-  "depends": ["base"],
+  "depends": ["base", "hr"],
   "application": true,
   "data": [
     "security/security.xml",
