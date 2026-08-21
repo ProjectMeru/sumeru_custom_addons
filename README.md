@@ -64,7 +64,6 @@ make run
 Inspect paths:
 
 ```bash
-make paths
 make help
 ```
 
@@ -101,10 +100,16 @@ Do **not** commit changes into `sumeru` or `sumeru_addons` for client work — t
 
 ## Developing custom addons
 
-Create modules under `addons/<technical_name>/` with the usual layout (`manifest.json`, `init.go`, models, views, security). Sample modules in this repo:
+Create modules under `addons/<technical_name>/` with the usual layout (`manifest.json`, `init.go`, models, views, security). Sample module in this repo:
 
-- **`my_module`** — example application module
-- **`student`** — Student Management sample app
+- **`my_module`** — field/ORM cookbook (reference addon)
+
+Scaffold a new app:
+
+```bash
+make new MODULE=my_app
+make install MODULES=my_app
+```
 
 Ensure `./addons` is on `addons_path` (see `sumeru.conf.example`), e.g.:
 
@@ -119,7 +124,7 @@ After adding or removing an addon, run **`make generate`** so `addonimports/zimp
 The engine is read-only — you never edit `sumeru/core` to add comodel markers. Instead:
 
 1. List upstream modules in **`manifest.json`** → `"depends": ["base", "hr"]`
-2. Run **`make refs`** (or **`make generate`**, which runs refs first)
+2. Run **`make generate`** (writes `addonimports/zimports.go`, per-addon `init.go`, `models/zmodels.go`, and `models/zrefs.go` when needed)
 3. Use generated types in your models:
 
 ```go
@@ -129,19 +134,20 @@ EmployeeID sdk.Many2One[HrEmployee]   // after depends includes hr
 PartnerID  sdk.Many2One[CorePartner]  // phantom when Go name ≠ technical model
 ```
 
-`tools/refs-gen` scans depended addons (transitively), reads each model’s `sumeru:"model=…"` tag, and writes **`addons/<module>/models/zrefs.go`** with type aliases (or relation phantoms when names differ, e.g. `Partner` → use `CorePartner`).
+`sumeru-import-gen` (via **`make generate`**) scans depended addons (transitively), reads each model’s `sumeru:"model=…"` tag, and writes **`addons/<module>/models/zrefs.go`** with type aliases (or relation phantoms when names differ, e.g. `Partner` → use `CorePartner`).
 
-Add a new dependency (e.g. `"salary"`) → run **`make refs`** again — no engine changes.
+Add a new dependency (e.g. `"salary"`) → run **`make generate`** again — no engine changes.
 
 Install / update (Make or raw CLI):
 
 ```bash
-make install MODULES=my_module,student
+make new MODULE=my_module
+make install MODULES=my_module
 make update  MODULES=all
 make update  MODULES=my_module DB=sumeru_dev
 
 # equivalent go run (run make generate first)
-go run . -- -c sumeru.conf -i my_module,student --stop-after-init
+go run . -- -c sumeru.conf -i my_module --stop-after-init
 go run . -- -c sumeru.conf -u all --stop-after-init
 go run . -- -c sumeru.conf -d sumeru_test -u my_module --stop-after-init
 ```
@@ -164,8 +170,8 @@ Variables (command line or **`config.mk`** from **`config.mk.example`**):
 
 | Variable | Default | Maps to | Purpose |
 | --- | --- | --- | --- |
-| **`SUMERU_ROOT`** | `../sumeru` | — | Core checkout for import-gen and **`make replace-sumeru`**. |
-| **`ADDONS_ROOT`** | `../sumeru_addons` | — | Standard addons checkout for **`make replace-sumeru-addons`**. |
+| **`SUMERU_ROOT`** | `../sumeru` | — | Core checkout for import-gen and `sumeru-bp`. |
+| **`ADDONS_ROOT`** | `../sumeru_addons` | — | Standard addons checkout (`go.mod` replace). |
 | **`CONF`** | `sumeru.conf` | `-c` | INI path. |
 | **`DB`** | _(empty)_ | `-d` | Override INI **`db_name`** for this run. |
 | **`MODULES`** | _(empty)_ | `-i` / `-u` | Comma-separated module names; **`all`** valid for update only. |
@@ -176,17 +182,13 @@ Targets:
 
 | Target | CLI equivalent |
 | --- | --- |
-| **`make setup`** | conf + wire + generate |
+| **`make setup`** | conf + go.mod replace + generate |
+| **`make new MODULE=…`** | `sumeru-bp -bp … -out addons` then generate |
 | **`make run [DB=…]`** | `go run . -- -c $(CONF) [-d …]` |
-| **`make install MODULES=…`** / **`make i`** | `-i … --stop-after-init` |
-| **`make update MODULES=…`** / **`make u`** | `-u … --stop-after-init` |
-| **`make sync MODULES=…`** | `-i … -u … --stop-after-init` |
-| **`make cli EXTRA_RUN_FLAGS='…'`** | arbitrary flags |
-| **`make generate`** | refresh **`addonimports/zimports.go`** + **`zrefs.go`** |
-| **`make refs`** | regenerate **`zrefs.go`** only |
+| **`make install MODULES=…`** | `-i … --stop-after-init` |
+| **`make update MODULES=…`** | `-u … --stop-after-init` |
+| **`make generate`** | refresh **`addonimports/zimports.go`**, addon **`init.go`**, **`zmodels.go`**, **`zrefs.go`** |
 | **`make build`** | **`bin/sumeru-erp`** binary |
-| **`make wire`** | both **`replace-*`** + tidy |
-| **`make paths`** | print resolved paths |
 | **`make help`** | full reference |
 
 ---

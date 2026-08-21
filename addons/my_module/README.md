@@ -16,7 +16,7 @@ Reference addon for Sumeru custom module authors. The `my.module` form demonstra
 Depends on **`base`** and **`hr`**. Run from workspace root:
 
 ```bash
-make refs    # or make generate
+make generate
 ```
 
 This generates **`models/zrefs.go`** with typed handles (`CoreCompany`, `HrEmployee`, `CorePartner`, …). Use them in relation fields — no engine edits, no `sdk.CoreCompany` markers:
@@ -27,7 +27,7 @@ EmployeeID sdk.Many2One[HrEmployee]
 PartnerID  sdk.Many2One[CorePartner]   // Partner record type is basemodels.Partner
 ```
 
-Add `"salary"` (or any module) to `manifest.json` `depends`, then `make refs` again.
+Add `"salary"` (or any module) to `manifest.json` `depends`, then `make generate` again.
 
 ## Field markers demonstrated
 
@@ -72,7 +72,7 @@ make run
 
 - **Selection:** `type Foo string` + `const (...)` — no `init()` registration.
 - **Same-module relations:** `Many2One[MyModule]`, `One2Many[MyModuleLine]`.
-- **Cross-module relations:** declare `depends`, run `make refs`, use types from `zrefs.go`.
+- **Cross-module relations:** declare `depends`, run `make generate`, use types from `zrefs.go`.
 - **Optional soft deps:** `Many2One[sdk.Any]` + `comodel=technical.model` when the module may not be installed.
 - Register compute handlers in `computed.go` via `orm.RegisterCompute` (names must match `compute=` tags).
 - List views live in `views/list_view.xml` with `type="list"`.
