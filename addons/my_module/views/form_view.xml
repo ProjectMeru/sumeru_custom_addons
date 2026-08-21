@@ -15,47 +15,91 @@
                     </h1>
                 </div>
                 <group>
-                    <group string="Scalars">
-                        <field name="reference" string="Reference" />
-                        <field name="priority" string="Priority" />
-                        <field name="quantity" string="Quantity" />
-                        <field name="progress_pct" string="Progress %" />
-                        <field name="amount" string="Amount" />
-                        <field name="price" string="Price" />
+                    <group string="Identity">
+                        <field name="reference" />
+                        <field name="external_code" />
+                        <field name="serial_number" />
+                        <field name="short_code" />
+                        <field name="public_id" />
+                        <field name="priority" widget="priority" />
                     </group>
-                    <group string="Dates and flags">
-                        <field name="date_start" string="Start Date" />
-                        <field name="datetime_due" string="Due Date" />
-                        <field name="active" string="Active" widget="radio" />
-                        <field name="sequence" string="Sequence" />
-                    </group>
-                </group>
-                <group>
-                    <group string="Relations">
-                        <field name="company_id" string="Company" widget="selection" />
-                        <field name="user_id" string="Responsible" widget="selection" />
-                    </group>
-                    <group string="Geo cascade">
-                        <field name="country_id" string="Country" widget="selection" />
-                        <field name="state_id" string="State" widget="selection" />
-                        <field name="city_id" string="City" widget="selection" />
-                    </group>
-                </group>
-                <group string="Contact and media">
-                    <group string="Contact">
-                        <field name="email" string="Email" widget="email" />
-                        <field name="phone" string="Phone" widget="phone" />
-                    </group>
-                    <group string="Media">
-                        <field name="image" string="Image" widget="image" />
+                    <group string="Flags">
+                        <field name="active" widget="radio" />
+                        <field name="verified" />
+                        <field name="archived" />
+                        <field name="sequence" />
                     </group>
                 </group>
                 <notebook>
-                    <page string="Description" name="description">
-                        <field name="description" placeholder="Internal notes..." />
+                    <page string="Scalars" name="scalars">
+                        <group>
+                            <group string="Numbers">
+                                <field name="quantity" />
+                                <field name="progress_pct" widget="progress" />
+                                <field name="rating" />
+                                <field name="amount" />
+                                <field name="price" />
+                                <field name="tax_rate" />
+                                <field name="balance" />
+                            </group>
+                            <group string="Money">
+                                <field name="currency_id" widget="selection" />
+                                <field name="subtotal" widget="monetary" />
+                                <field name="tax_amount" widget="monetary" />
+                                <field name="salary" widget="monetary" />
+                            </group>
+                        </group>
+                        <group>
+                            <group string="Dates">
+                                <field name="date_start" />
+                                <field name="datetime_due" />
+                                <field name="completed_at" />
+                                <field name="opening_time" />
+                                <field name="closing_time" />
+                                <field name="processing_time" />
+                            </group>
+                            <group string="Contact">
+                                <field name="email" widget="email" />
+                                <field name="phone" widget="phone" />
+                                <field name="website" widget="url" />
+                            </group>
+                        </group>
                     </page>
-                    <page string="Tags" name="tags">
+                    <page string="Text and media" name="text_media">
+                        <field name="description" />
+                        <field name="notes" widget="html" />
+                        <field name="avatar" widget="image" />
+                        <field name="document" widget="binary" />
+                        <field name="settings" />
+                        <field name="metadata_json" />
+                    </page>
+                    <page string="Relations" name="relations">
+                        <group>
+                            <group string="Company">
+                                <field name="company_id" widget="selection" />
+                                <field name="company_name" />
+                                <field name="user_id" widget="selection" />
+                            </group>
+                            <group string="Geo">
+                                <field name="country_id" widget="selection" />
+                                <field name="state_id" widget="selection" />
+                                <field name="city_id" widget="selection" />
+                            </group>
+                        </group>
+                        <group string="Hierarchy">
+                            <field name="parent_id" widget="selection" />
+                        </group>
                         <field name="tag_ids" widget="many2many_tags" />
+                        <field name="category_ids" widget="many2many_tags" />
+                    </page>
+                    <page string="Reference" name="reference">
+                        <field name="resource_ref" widget="reference" />
+                        <field name="resource_model" />
+                        <field name="resource_id" />
+                    </page>
+                    <page string="Computed" name="computed">
+                        <field name="computed_amount" />
+                        <field name="stored_line_count" />
                     </page>
                     <page string="Lines" name="lines">
                         <field name="line_ids">
@@ -67,12 +111,7 @@
                             </list>
                         </field>
                     </page>
-                    <page string="JSON" name="json">
-                        <field name="metadata_json" />
-                    </page>
                 </notebook>
-                <separator string="Label example" />
-                <label for="email" string="Email is rendered above with widget=email" />
             </sheet>
             <footer>
                 <button name="action_confirm" string="Confirm" type="object" class="" />
