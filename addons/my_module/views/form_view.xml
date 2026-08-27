@@ -4,29 +4,32 @@
         <view id="view_my_module_form" model="my.module" type="form">
             <header>
                 <button name="action_confirm" string="Confirm" type="object" class="sum_highlight" />
-                <button name="action_done" string="Done" type="object" class="" />
-                <button name="action_reset_draft" string="Reset to Draft" type="object" class="" />
-                <field name="state" widget="statusbar" />
+                <button name="action_done" string="Done" type="object" />
+                <button name="action_reset_draft" string="Reset to Draft" type="object" />
+                <field name="state" widget="statusbar" options="clickable:1" />
             </header>
             <sheet>
                 <div class="sum_title">
+                    <field name="avatar" widget="image" />
                     <h1>
-                        <field name="name" placeholder="Title..." />
+                        <field name="name" widget="char" placeholder="Title..." />
                     </h1>
                 </div>
                 <group>
                     <group string="Identity">
-                        <field name="reference" />
+                        <field name="reference" widget="default" />
                         <field name="external_code" />
                         <field name="serial_number" />
                         <field name="short_code" />
-                        <field name="public_id" />
-                        <field name="priority" widget="priority" />
+                        <field name="public_id" readonly="1" />
+                        <field name="priority" widget="priority" options="mode:stars,stars:5" />
+                        <field name="kind" widget="radio" />
+                        <field name="color_code" widget="color" />
                     </group>
                     <group string="Flags">
                         <field name="active" widget="radio" />
-                        <field name="verified" />
-                        <field name="archived" />
+                        <field name="verified" widget="boolean" />
+                        <field name="archived" widget="boolean_toggle" />
                         <field name="sequence" />
                     </group>
                 </group>
@@ -34,11 +37,11 @@
                     <page string="Scalars" name="scalars">
                         <group>
                             <group string="Numbers">
-                                <field name="quantity" />
+                                <field name="quantity" widget="integer" />
                                 <field name="progress_pct" widget="progress" />
-                                <field name="rating" />
-                                <field name="amount" />
-                                <field name="price" />
+                                <field name="rating" widget="integer" />
+                                <field name="amount" widget="float" />
+                                <field name="price" widget="numeric" />
                                 <field name="tax_rate" />
                                 <field name="balance" />
                             </group>
@@ -51,9 +54,10 @@
                         </group>
                         <group>
                             <group string="Dates">
-                                <field name="date_start" />
-                                <field name="datetime_due" />
-                                <field name="completed_at" />
+                                <field name="date_start" widget="date" />
+                                <field name="date_stop" widget="date" />
+                                <field name="datetime_due" widget="datetime" />
+                                <field name="completed_at" widget="datetime" />
                                 <field name="opening_time" />
                                 <field name="closing_time" />
                                 <field name="processing_time" />
@@ -66,19 +70,20 @@
                         </group>
                     </page>
                     <page string="Text and media" name="text_media">
-                        <field name="description" />
+                        <field name="description" widget="text" />
                         <field name="notes" widget="html" />
-                        <field name="avatar" widget="image" />
                         <field name="document" widget="binary" />
-                        <field name="settings" />
-                        <field name="metadata_json" />
+                        <field name="settings" widget="json" />
+                        <field name="metadata_json" widget="json" />
                     </page>
                     <page string="Relations" name="relations">
                         <group>
                             <group string="Company">
                                 <field name="company_id" widget="selection" />
-                                <field name="company_name" />
-                                <field name="user_id" widget="selection" />
+                                <field name="company_name" readonly="1" />
+                                <field name="user_id" widget="many2one" />
+                                <field name="employee_id" widget="many2one" />
+                                <field name="partner_id" widget="many2one" />
                             </group>
                             <group string="Geo">
                                 <field name="country_id" widget="selection" />
@@ -87,10 +92,10 @@
                             </group>
                         </group>
                         <group string="Hierarchy">
-                            <field name="parent_id" widget="selection" />
+                            <field name="parent_id" widget="many2one" />
                         </group>
                         <field name="tag_ids" widget="many2many_tags" />
-                        <field name="category_ids" widget="many2many_tags" />
+                        <field name="category_ids" widget="many2many" />
                     </page>
                     <page string="Reference" name="reference">
                         <field name="resource_ref" widget="reference" />
@@ -98,11 +103,11 @@
                         <field name="resource_id" />
                     </page>
                     <page string="Computed" name="computed">
-                        <field name="computed_amount" />
-                        <field name="stored_line_count" />
+                        <field name="computed_amount" readonly="1" />
+                        <field name="stored_line_count" readonly="1" />
                     </page>
                     <page string="Lines" name="lines">
-                        <field name="line_ids">
+                        <field name="line_ids" widget="one2many">
                             <list editable="bottom">
                                 <field name="name" />
                                 <field name="quantity" />
@@ -111,11 +116,21 @@
                             </list>
                         </field>
                     </page>
+                    <page string="Children" name="children">
+                        <field name="child_ids">
+                            <list>
+                                <field name="name" />
+                                <field name="state" />
+                                <field name="date_start" />
+                            </list>
+                        </field>
+                    </page>
                 </notebook>
             </sheet>
             <footer>
-                <button name="action_confirm" string="Confirm" type="object" class="" />
+                <button name="action_confirm" string="Confirm" type="object" />
             </footer>
+            <chatter />
         </view>
     </data>
 </sumeru>

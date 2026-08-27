@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data noupdate="1">
+        <record id="tag_urgent" model="my.module.tag">
+            <field name="name">Urgent</field>
+            <field name="color">#dc2626</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="tag_demo" model="my.module.tag">
+            <field name="name">Demo</field>
+            <field name="color">#2563eb</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="tag_review" model="my.module.tag">
+            <field name="name">Review</field>
+            <field name="color">#16a34a</field>
+            <field name="sequence">30</field>
+        </record>
+
+        <record id="category_internal" model="my.module.category">
+            <field name="name">Internal</field>
+            <field name="sequence">10</field>
+            <field name="active" eval="True" />
+        </record>
+        <record id="category_customer" model="my.module.category">
+            <field name="name">Customer</field>
+            <field name="sequence">20</field>
+            <field name="active" eval="True" />
+        </record>
+
+        <record id="demo_alpha" model="my.module">
+            <field name="name">Alpha launch</field>
+            <field name="reference">ALPHA</field>
+            <field name="serial_number">DEMO-001</field>
+            <field name="kind">demo</field>
+            <field name="state">draft</field>
+            <field name="priority">low</field>
+            <field name="amount">1200</field>
+            <field name="date_start">2026-01-06</field>
+            <field name="date_stop">2026-01-10</field>
+            <field name="progress_pct">20</field>
+            <field name="color_code">#2563eb</field>
+            <field name="email">alpha@example.com</field>
+        </record>
+        <record id="demo_beta" model="my.module">
+            <field name="name">Beta rollout</field>
+            <field name="reference">BETA</field>
+            <field name="serial_number">DEMO-002</field>
+            <field name="kind">demo</field>
+            <field name="state">confirmed</field>
+            <field name="priority">normal</field>
+            <field name="amount">3400</field>
+            <field name="date_start">2026-01-12</field>
+            <field name="date_stop">2026-01-20</field>
+            <field name="progress_pct">55</field>
+            <field name="color_code">#16a34a</field>
+            <field name="email">beta@example.com</field>
+        </record>
+        <record id="demo_gamma" model="my.module">
+            <field name="name">Gamma review</field>
+            <field name="reference">GAMMA</field>
+            <field name="serial_number">DEMO-003</field>
+            <field name="kind">demo</field>
+            <field name="state">done</field>
+            <field name="priority">high</field>
+            <field name="amount">890</field>
+            <field name="date_start">2026-02-02</field>
+            <field name="date_stop">2026-02-08</field>
+            <field name="progress_pct">100</field>
+            <field name="color_code">#dc2626</field>
+        </record>
+        <record id="demo_delta" model="my.module">
+            <field name="name">Delta support</field>
+            <field name="reference">DELTA</field>
+            <field name="serial_number">DEMO-004</field>
+            <field name="kind">demo</field>
+            <field name="state">confirmed</field>
+            <field name="priority">normal</field>
+            <field name="amount">2100</field>
+            <field name="date_start">2026-02-14</field>
+            <field name="date_stop">2026-02-28</field>
+            <field name="progress_pct">40</field>
+            <field name="color_code">#7c3aed</field>
+        </record>
+        <record id="demo_epsilon" model="my.module">
+            <field name="name">Epsilon backlog</field>
+            <field name="reference">EPSILON</field>
+            <field name="serial_number">DEMO-005</field>
+            <field name="kind">demo</field>
+            <field name="state">draft</field>
+            <field name="priority">low</field>
+            <field name="amount">450</field>
+            <field name="date_start">2026-03-01</field>
+            <field name="date_stop">2026-03-05</field>
+            <field name="progress_pct">5</field>
+            <field name="color_code">#f59e0b</field>
+        </record>
+        <record id="demo_zeta" model="my.module">
+            <field name="name">Zeta wrap-up</field>
+            <field name="reference">ZETA</field>
+            <field name="serial_number">DEMO-006</field>
+            <field name="kind">demo</field>
+            <field name="state">done</field>
+            <field name="priority">high</field>
+            <field name="amount">5600</field>
+            <field name="date_start">2026-03-10</field>
+            <field name="date_stop">2026-03-18</field>
+            <field name="progress_pct">100</field>
+            <field name="color_code">#0891b2</field>
+        </record>
+
+        <record id="line_alpha_1" model="my.module.line">
+            <field name="module_id" ref="demo_alpha" />
+            <field name="name">Alpha Design</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">150</field>
+        </record>
+        <record id="line_alpha_2" model="my.module.line">
+            <field name="module_id" ref="demo_alpha" />
+            <field name="name">Alpha Build</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">900</field>
+        </record>
+        <record id="line_beta_1" model="my.module.line">
+            <field name="module_id" ref="demo_beta" />
+            <field name="name">Beta QA pass</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">80</field>
+        </record>
+
+        <record id="event_kickoff" model="my.module.event">
+            <field name="name">Kickoff</field>
+            <field name="module_id" ref="demo_alpha" />
+            <field name="date_start">2026-01-06</field>
+            <field name="date_stop">2026-01-07</field>
+            <field name="state">planned</field>
+        </record>
+        <record id="event_build" model="my.module.event">
+            <field name="name">Build week</field>
+            <field name="module_id" ref="demo_beta" />
+            <field name="date_start">2026-01-12</field>
+            <field name="date_stop">2026-01-16</field>
+            <field name="state">planned</field>
+        </record>
+        <record id="event_retro" model="my.module.event">
+            <field name="name">Retro</field>
+            <field name="module_id" ref="demo_gamma" />
+            <field name="date_start">2026-01-20</field>
+            <field name="date_stop">2026-01-21</field>
+            <field name="state">done</field>
+        </record>
+
+        <record id="place_bengaluru" model="my.module.place">
+            <field name="name">Bengaluru office</field>
+            <field name="latitude">12.9716</field>
+            <field name="longitude">77.5946</field>
+            <field name="color">#2563eb</field>
+        </record>
+        <record id="place_delhi" model="my.module.place">
+            <field name="name">Delhi office</field>
+            <field name="latitude">28.6139</field>
+            <field name="longitude">77.2090</field>
+            <field name="color">#16a34a</field>
+        </record>
+        <record id="place_mumbai" model="my.module.place">
+            <field name="name">Mumbai office</field>
+            <field name="latitude">19.0760</field>
+            <field name="longitude">72.8777</field>
+            <field name="color">#dc2626</field>
+        </record>
+    </data>
+</sumeru>

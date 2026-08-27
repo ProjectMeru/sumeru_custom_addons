@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_my_module_calendar" model="my.module" type="calendar" date_start="date_start" string="Cookbook">
+            <field name="name" />
+            <field name="date_start" />
+            <field name="user_id" />
+        </view>
+    </data>
+</sumeru>

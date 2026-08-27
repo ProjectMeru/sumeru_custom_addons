@@ -1,66 +1,38 @@
-# my_module — Developer UI/ORM Cookbook
+# my_module — kitchen-sink demo
 
-Reference addon for Sumeru custom module authors. The `my.module` form demonstrates every supported SDK field marker, struct tag, relation pattern, compute, and related field.
+Reference addon for custom-module authors. It shows every built-in field widget and workspace view type, split across a few models and a CRM-style menu tree.
 
 ## Models
 
 | Model | Purpose |
 |-------|---------|
-| `my.module` | Full field-type cookbook |
-| `my.module.line` | One2Many child lines |
-| `my.module.tag` | Many2Many tags |
-| `my.module.category` | Many2Many with explicit rel table |
+| `my.module` | Field/widget cookbook (kanban, list, form, calendar, gantt, graph, pivot, cohort) |
+| `my.module.line` | One2many child lines (also a standalone list/form) |
+| `my.module.event` | Calendar + gantt planning (`date_start` / `date_stop`) |
+| `my.module.place` | Map markers (`latitude` / `longitude`) |
+| `my.module.tag` | Many2many tags + color picker |
+| `my.module.category` | Many2many categories |
+
+## Menus
+
+| Menu | Action | View modes |
+|------|--------|------------|
+| Cookbook operations → Cookbook records | `action_my_module` | kanban, list, form, calendar, gantt |
+| Cookbook operations → Cookbook lines | `action_my_module_line` | list, form |
+| Cookbook planning → Cookbook events | `action_my_module_event` | calendar, gantt, list, form |
+| Cookbook planning → Cookbook places | `action_my_module_place` | map, list, form |
+| Cookbook reporting → Cookbook analysis | `action_my_module_analysis` | graph, pivot, cohort, list |
+| Cookbook configuration → Tags / Categories | manager | list, form |
+
+Search views attach to the collection toolbars (not a separate menu).
+
+## Widgets on the cookbook form
+
+`char` / `default`, `email`, `integer`, `float`, `numeric`, `text`, `json`, `date`, `datetime`, `boolean`, `boolean_toggle`, `radio`, `phone`, `url`, `html`, `binary`, `image`, `selection`, `many2one`, `many2many` / `many2many_tags`, `one2many`, `statusbar`, `priority`, `monetary`, `progress` / `progressbar`, `color`, `reference`, `handle` (list sequence).
 
 ## Cross-module relations
 
-Depends on **`base`** and **`hr`**. Run from workspace root:
-
-```bash
-make generate
-```
-
-This generates **`models/zrefs.go`** with typed handles (`CoreCompany`, `HrEmployee`, `CorePartner`, …). Use them in relation fields — no engine edits, no `sdk.CoreCompany` markers:
-
-```go
-CompanyID  sdk.Many2One[CoreCompany]
-EmployeeID sdk.Many2One[HrEmployee]
-PartnerID  sdk.Many2One[CorePartner]   // Partner record type is basemodels.Partner
-```
-
-Add `"salary"` (or any module) to `manifest.json` `depends`, then `make generate` again.
-
-## Field markers demonstrated
-
-| Marker | Example field | Notes |
-|--------|---------------|-------|
-| `sdk.String` | `name`, `reference` | `column=`, `unique`, `size=` |
-| `sdk.Text` | `description` | |
-| `sdk.HTML` | `notes` | widget `html` |
-| `sdk.URL` | `website` | widget `url` |
-| `sdk.Boolean` | `active`, `verified` | |
-| `sdk.Integer` | `quantity`, `rating` | `min=`, `max=` |
-| `sdk.Float` | `amount` | |
-| `sdk.Numeric` | `price`, `balance` | `precision=`, `scale=` |
-| `sdk.Money` | `subtotal`, `salary` | `currency=CurrencyID` |
-| `sdk.Selection[T]` | `priority`, `state` | const options auto-discovered |
-| `sdk.Date` / `DateTime` / `Time` | `date_start`, `datetime_due`, `opening_time` | |
-| `sdk.Duration` | `processing_time` | |
-| `sdk.Email` / `Phone` | `email`, `phone` | auto widgets |
-| `sdk.UUID` | `public_id` | `default=uuid` |
-| `sdk.Json` / `Binary` / `Image` | `settings`, `document`, `avatar` | |
-| `sdk.Reference` | `resource_ref` | |
-| `sdk.Many2OneReference` | `resource_id` | `model_field=ResourceModel` |
-| `sdk.Many2One` / `One2Many` / `Many2Many` | relations | `ondelete=`, `inverse=`, `table=` |
-| related | `company_name` | `related=company_id.name` |
-| compute | `computed_amount`, `stored_line_count` | handlers in `computed.go` |
-
-## Object actions
-
-- `action_confirm` → state `confirmed`
-- `action_done` → state `done`
-- `action_reset_draft` → state `draft`
-
-## Reload after changes
+Depends on **`base`**, **`hr`**, and **`mail`** (chatter). From the custom-addons workspace:
 
 ```bash
 make generate
@@ -68,11 +40,20 @@ make update MODULES='my_module'
 make run
 ```
 
+`make generate` rewrites **`models/zmodels.go`** and **`models/zrefs.go`**. Do not edit those files.
+
+Demo rows in `data/demo.xml` upsert on unique `name` (and unique line descriptions).
+
+## Object actions
+
+- `action_confirm` → `confirmed`
+- `action_done` → `done`
+- `action_reset_draft` → `draft`
+
 ## Conventions
 
-- **Selection:** `type Foo string` + `const (...)` — no `init()` registration.
+- **Selection:** typed `const` blocks in `selection_types.go`.
 - **Same-module relations:** `Many2One[MyModule]`, `One2Many[MyModuleLine]`.
-- **Cross-module relations:** declare `depends`, run `make generate`, use types from `zrefs.go`.
-- **Optional soft deps:** `Many2One[sdk.Any]` + `comodel=technical.model` when the module may not be installed.
-- Register compute handlers in `computed.go` via `orm.RegisterCompute` (names must match `compute=` tags).
-- List views live in `views/list_view.xml` with `type="list"`.
+- **Cross-module relations:** types from `zrefs.go` after `make generate`.
+- Compute handlers in `computed.go` must match `compute=` tags.
+- List views use `type="list"`.
