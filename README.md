@@ -1,299 +1,204 @@
 # sumeru_custom_addons
 
-Thin **workspace** for **your** custom / client Sumeru addons. This repo sits next to the standard **`sumeru`** and **`sumeru_addons`** trees: own `go.mod`, generated **`addonimports/`**, and a local **`sumeru.conf`**, so you can **`git pull`** upstream core without committing generated glue here.
+**Your Sumeru development workspace** — run the ERP server, build custom addons, and keep core engines read-only.
 
-Put modules you create for a client or project under **`addons/`**. Keep **`sumeru`** and **`sumeru_addons`** read-only.
+> **Pre-alpha software** — not for production. See the [sumeru README](https://github.com/ProjectMeru/sumeru/blob/main/README.md) for the full status notice.
 
-## License
+This repository is **Tier 3** in the Sumeru stack: your client or project workspace with its own `go.mod`, generated **`addonimports/`**, and local **`sumeru.conf`**. Pull **`sumeru`** and **`sumeru_addons`** as read-only siblings; develop and commit only here.
 
-This repository is licensed under the **Apache License 2.0**. See [LICENSE](LICENSE) for the full text.
+## Three-tier layout
 
-Custom addons you add under `addons/` are part of this workspace and are covered by the same license unless you change licensing for your derived work.
-
-## Architecture: 3-Tier Split
-
-1. **Tier 1: Core Framework (`sumeru`)** — Standard engine and base models. **READ-ONLY**.
-2. **Tier 2: Standard Addons (`sumeru_addons`)** — Core business modules (CRM, Sales, Inventory). **READ-ONLY**.
-3. **Tier 3: Custom Workspace (`sumeru_custom_addons`)** — Your development area. Custom modules go in `addons/`.
-
-Expected sibling layout:
+| Tier | Repository | Role |
+| ---- | ---------- | ---- |
+| 1 | **[sumeru](https://github.com/ProjectMeru/sumeru)** | Core engine + kernel apps — **read-only** |
+| 2 | **[sumeru_addons](https://github.com/ProjectMeru/sumeru_addons)** | Standard business apps (CRM, Sales, …) — **read-only** |
+| 3 | **sumeru_custom_addons** (this repo) | Custom modules under `addons/`, config, `make run` |
 
 ```text
 parent/
-  sumeru/                 # Tier 1 (read-only)
-  sumeru_addons/          # Tier 2 (read-only)
-  sumeru_custom_addons/   # Tier 3 (this repo — your custom addons)
+  sumeru/                 # Tier 1
+  sumeru_addons/          # Tier 2
+  sumeru_custom_addons/   # Tier 3 — you work here
 ```
+
+## What you get when you run the server
+
+Starting **`make run`** launches the full Sumeru web stack:
+
+- **Settings hub** and **app launcher** with multi-company support
+- **Workspace views** — list, form, kanban, graph, pivot, calendar, gantt, map, cohort
+- **Collection control bar** — search, filters, multi group-by, custom domain rules, saved-search favorites
+- **Standard apps** from `sumeru_addons` plus **your modules** under `addons/`
+- **JSON-RPC API** at `POST /api/rpc` for integrations
 
 ## Prerequisites
 
-- **Go** (same version as `../sumeru/go.mod`)
-- **PostgreSQL** and an empty database matching `db_name` in your INI
-- Checkouts of **`sumeru`** and **`sumeru_addons`** as siblings (defaults: `../sumeru`, `../sumeru_addons`)
+- [Go](https://go.dev/dl/) (same version as `../sumeru/go.mod`, currently 1.26.2+)
+- [Node.js](https://nodejs.org/) (npm — builds the SWC workspace UI in `../sumeru`)
+- [PostgreSQL](https://www.postgresql.org/) and an empty database matching `db_name` in your INI
+- Git checkouts of **`sumeru`** and **`sumeru_addons`** as siblings (defaults: `../sumeru`, `../sumeru_addons`)
 
-## Quick start (how to use)
+## Quick start
 
-Work from **this directory** unless you use absolute paths in the INI.
+Work from **this directory**:
 
 ```bash
-# Clone as siblings (adjust URLs to your org)
-git clone <sumeru-remote> sumeru
-git clone <sumeru-addons-remote> sumeru_addons
+mkdir -p ~/sumeru_erp && cd ~/sumeru_erp
+git clone git@github.com:ProjectMeru/sumeru.git
+git clone git@github.com:ProjectMeru/sumeru_addons.git
 git clone git@github.com:ProjectMeru/sumeru_custom_addons.git
+
+# Create a PostgreSQL database matching db_name in your INI, e.g.:
+#   psql -c "CREATE DATABASE sumeru;"
+
 cd sumeru_custom_addons
-
-# Local config (gitignored)
-cp sumeru.conf.example sumeru.conf
-# Edit db_* and paths in sumeru.conf
-
-# Bootstrap (wire go.mod, generate imports, create sumeru.conf if missing)
-make setup
-make run
+cp sumeru.conf.example sumeru.conf   # edit db_*, http_port, addons_path
+make setup    # go.mod replaces, imports, SWC + login JS bundles
+make run      # regenerate imports; rebuild assets when missing or stale
 ```
 
-| Step | Command | What it does |
-| --- | --- | --- |
-| 1. Config | `cp sumeru.conf.example sumeru.conf` then edit | Local INI (gitignored). |
-| 2. Bootstrap | `make setup` | Wire `go.mod`, generate `addonimports/zimports.go`, create `sumeru.conf` if missing. |
-| 3. Start server | `make run` | Generate imports then start HTTP. |
-| 4. Install | `make install MODULES=my_module` | `-i` then exit (no HTTP). |
-| 5. Update | `make update MODULES=all` or `MODULES=mod1,mod2` | `-u` then exit; `all` = installed only; explicit list skips uninstalled. |
-| Other DB | `make run DB=sumeru_staging` | `-d` overrides INI `db_name` for this run. |
-| Build binary | `make build` | `./bin/sumeru-erp -c sumeru.conf` |
-
-Inspect paths:
-
-```bash
-make help
-```
+Open **`http://localhost:8080`** (or your `http_port`). `/` redirects to **`/web/apps`**.
 
 Optional: copy **`config.mk.example`** → **`config.mk`** (gitignored) to pin `SUMERU_ROOT`, `ADDONS_ROOT`, or default `DB`.
 
-## Make this repo yours (re-point origin)
+## Daily developer workflow
 
-This repository is a **template workspace**. After cloning, remove the template `origin` and attach **your** project remote so your client/custom addons stay on your branch.
+| Task | Command |
+| ---- | ------- |
+| First-time bootstrap | `make setup` |
+| Start dev server | `make run` or `make dev` |
+| After editing SWC in `../sumeru` | `make swc` (or `make run` rebuilds when sources are stale) |
+| New custom module | `make new MODULE=my_app` then `make install MODULES=my_app` |
+| Reload views / manifest data | `make update MODULES=my_app` or `make update MODULES=all` |
+| Pull upstream core | see [Keeping upstream updated](#keeping-upstream-updated) |
+| Tests | `make check` |
+| Production binary | `make build` → `bin/sumeru-erp` |
+| Other database | `make run DB=sumeru_staging` |
+| Custom port | `make run EXTRA_RUN_FLAGS='-p 9090'` |
 
-```bash
-# 1) Clone the template
-git clone git@github.com:ProjectMeru/sumeru_custom_addons.git
-cd sumeru_custom_addons
-
-# 2) Ready the workspace (siblings sumeru / sumeru_addons must exist)
-cp sumeru.conf.example sumeru.conf
-# edit db_* and paths in sumeru.conf
-make setup
-
-# 3) Detach from template upstream; attach your project remote
-git remote remove origin
-git remote add origin git@github.com:YOUR_ORG/YOUR_CLIENT_ADDONS.git
-git push -u origin main
-# or: git checkout -b your-branch && git push -u origin your-branch
-
-# 4) Day-to-day: keep core updated, develop and push only here
-cd ../sumeru && git pull
-cd ../sumeru_addons && git pull
-cd ../sumeru_custom_addons && make generate
-# commit and push this repo to your origin
+```text
+make run  →  generate (addonimports)  →  assets (../sumeru SWC)  →  HTTP server
 ```
 
-Do **not** commit changes into `sumeru` or `sumeru_addons` for client work — those stay read-only and updatable via `git pull`.
+Run **`make help`** for a short target list.
+
+## Client assets
+
+The browser UI is built in **`../sumeru`**, not stored in git. Sources live under `../sumeru/core/swc/src/`; outputs are gitignored:
+
+| Output | Purpose |
+| ------ | ------- |
+| `../sumeru/core/engine/assets/swc/swc.js` | Workspace UI |
+| `../sumeru/core/engine/assets/js/sumeru-password-*.js` | Login / setup helpers |
+
+**`make setup`** and **`make run`** call `make -C ../sumeru assets`, which builds bundles when missing or when TypeScript sources changed. Use **`make swc`** to force a full rebuild. Node.js is required on the machine where you run setup/run.
 
 ## Developing custom addons
 
-Create modules under `addons/<technical_name>/` with the usual layout (`manifest.json`, `init.go`, models, views, security). Sample module in this repo:
-
-- **`my_module`** — field/ORM cookbook (reference addon)
-
-Scaffold a new app:
+Put modules under **`addons/<technical_name>/`** with the usual layout (`manifest.json`, `init.go`, models, views, security). Reference sample: **`addons/my_module`**.
 
 ```bash
 make new MODULE=my_app
 make install MODULES=my_app
 ```
 
-Ensure `./addons` is on `addons_path` (see `sumeru.conf.example`), e.g.:
+Ensure **`./addons`** is on **`addons_path`** in `sumeru.conf`:
 
 ```ini
 addons_path = ../sumeru/addons,../sumeru_addons,./addons
 ```
 
-After adding or removing an addon, run **`make generate`** so `addonimports/zimports.go` picks up the blank imports and **`zrefs.go`** is refreshed for cross-module relations.
+After adding or removing an addon, run **`make generate`** so `addonimports/zimports.go` and per-addon **`zmodels.go`** / **`zrefs.go`** stay in sync.
 
 ### Cross-module relations (`zrefs.go`)
 
-The engine is read-only — you never edit `sumeru/core` to add comodel markers. Instead:
+Never edit `sumeru/core` for comodel types. Instead:
 
-1. List upstream modules in **`manifest.json`** → `"depends": ["base", "hr"]`
-2. Run **`make generate`** (writes `addonimports/zimports.go`, per-addon `init.go`, `models/zmodels.go`, and `models/zrefs.go` when needed)
+1. List upstream modules in **`manifest.json`**: `"depends": ["base", "hr"]`
+2. Run **`make generate`**
 3. Use generated types in your models:
 
 ```go
-// models/models.go — no extra imports for depended models
 CompanyID  sdk.Many2One[CoreCompany]  // from zrefs.go
 EmployeeID sdk.Many2One[HrEmployee]   // after depends includes hr
-PartnerID  sdk.Many2One[CorePartner]  // phantom when Go name ≠ technical model
 ```
 
-`sumeru-import-gen` (via **`make generate`**) scans depended addons (transitively), reads each model’s `sumeru:"model=…"` tag, and writes **`addons/<module>/models/zrefs.go`** with type aliases (or relation phantoms when names differ, e.g. `Partner` → use `CorePartner`).
+Add a new dependency → run **`make generate`** again.
 
-Add a new dependency (e.g. `"salary"`) → run **`make generate`** again — no engine changes.
+## Make this repo yours
 
-Install / update (Make or raw CLI):
+This repo is a **template workspace**. After cloning, point **`origin`** at your project remote:
 
 ```bash
-make new MODULE=my_module
-make install MODULES=my_module
-make update  MODULES=all
-make update  MODULES=my_module DB=sumeru_dev
+git clone git@github.com:ProjectMeru/sumeru_custom_addons.git
+cd sumeru_custom_addons
+cp sumeru.conf.example sumeru.conf
+make setup
 
-# equivalent go run (run make generate first)
-go run . -- -c sumeru.conf -i my_module --stop-after-init
-go run . -- -c sumeru.conf -u all --stop-after-init
-go run . -- -c sumeru.conf -d sumeru_test -u my_module --stop-after-init
+git remote remove origin
+git remote add origin git@github.com:YOUR_ORG/YOUR_CLIENT_ADDONS.git
+git push -u origin main
 ```
+
+Do **not** commit client work into `sumeru` or `sumeru_addons` — keep those read-only and updatable via `git pull`.
 
 ## Keeping upstream updated
 
 ```bash
 cd ../sumeru && git pull
 cd ../sumeru_addons && git pull
-cd ../sumeru_custom_addons && make generate
+cd ../sumeru_custom_addons && make run
 ```
 
-Then continue development and push **only** this repo to your project `origin`.
+`make run` regenerates imports and rebuilds SWC assets when needed. Commit and push **only** this repo to your project `origin`.
 
----
+## Makefile reference
 
-## Makefile variables and targets
+### Variables
 
-Variables (command line or **`config.mk`** from **`config.mk.example`**):
+Set on the command line or in **`config.mk`** (from **`config.mk.example`**):
 
-| Variable | Default | Maps to | Purpose |
-| --- | --- | --- | --- |
-| **`SUMERU_ROOT`** | `../sumeru` | — | Core checkout for import-gen and `sumeru-bp`. |
-| **`ADDONS_ROOT`** | `../sumeru_addons` | — | Standard addons checkout (`go.mod` replace). |
-| **`CONF`** | `sumeru.conf` | `-c` | INI path. |
-| **`DB`** | _(empty)_ | `-d` | Override INI **`db_name`** for this run. |
-| **`MODULES`** | _(empty)_ | `-i` / `-u` | Comma-separated module names; **`all`** valid for update only. |
-| **`OUT`** | `addonimports/zimports.go` | — | Generated imports path. |
-| **`EXTRA_RUN_FLAGS`** | _(empty)_ | `-p`, etc. | Other CLI flags (e.g. **`EXTRA_RUN_FLAGS='-p 9090'`**). |
+| Variable | Default | Purpose |
+| -------- | ------- | ------- |
+| `SUMERU_ROOT` | `../sumeru` | Core checkout |
+| `ADDONS_ROOT` | `../sumeru_addons` | Standard addons checkout |
+| `CONF` | `sumeru.conf` | INI path |
+| `DB` | _(empty)_ | Override `db_name` for this run |
+| `MODULES` | _(empty)_ | Comma-separated names for install/update |
+| `EXTRA_RUN_FLAGS` | _(empty)_ | Extra CLI flags (e.g. `-p 9090`) |
+| `OUT` | `addonimports/zimports.go` | Generated imports file |
 
-Targets:
+### Targets
 
-| Target | CLI equivalent |
-| --- | --- |
-| **`make setup`** | conf + go.mod replace + generate |
-| **`make new MODULE=…`** | `sumeru-bp -bp … -out addons` then generate |
-| **`make run [DB=…]`** | `go run . -- -c $(CONF) [-d …]` |
-| **`make install MODULES=…`** | `-i … --stop-after-init` |
-| **`make update MODULES=…`** | `-u … --stop-after-init` |
-| **`make generate`** | refresh **`addonimports/zimports.go`**, addon **`init.go`**, **`zmodels.go`**, **`zrefs.go`** |
-| **`make build`** | **`bin/sumeru-erp`** binary |
-| **`make help`** | full reference |
+| Target | Purpose |
+| ------ | ------- |
+| `setup` | Config, go.mod replaces, `generate`, SWC assets |
+| `run` / `dev` | `generate` + `assets` + HTTP server |
+| `generate` | Refresh `addonimports/zimports.go`, `init.go`, `zmodels.go`, `zrefs.go` |
+| `assets` | Build SWC + login JS when missing or stale (delegates to `../sumeru`) |
+| `swc` | Force rebuild client bundles |
+| `new MODULE=x` | Scaffold addon under `addons/` |
+| `install MODULES=x` | Install module(s), exit without HTTP |
+| `update MODULES=x` | Update module(s) or `all`, exit without HTTP |
+| `build` | `generate` + `assets` + `bin/sumeru-erp` |
+| `check` | SWC typecheck + `go test ./...` |
+| `replace-sumeru` | Re-wire `go.mod` replace for core |
+| `replace-sumeru-addons` | Re-wire replace for standard addons |
+| `swc-check` / `swc-test` | Delegate TypeScript check / vitest to core |
+| `help` | Print common targets |
 
----
-
-## Server CLI flags (`go run . -- …`)
-
-Parsed by **`sumeru/core/server`**. Pass **`-c`** unless your cwd and config layout match defaults.
-
-| Flag                                               | Purpose                                                              |
-| -------------------------------------------------- | -------------------------------------------------------------------- |
-| **`-c <path>`**                                    | Path to the INI file (e.g. **`sumeru.conf`**).                       |
-| **`-i mod`** or **`-i mod1,mod2`**                 | **Install** listed modules after startup init.                       |
-| **`-u mod`** or **`-u mod1,mod2`** or **`-u all`** | **Update** installed modules from disk (reload XML / metadata).      |
-| **`-d <name>`**                                    | Override **`db_name`** from the INI for this run.                    |
-| **`--database <name>`**                            | Same as **`-d`**; if both are set, **`--database`** wins.            |
-| **`-p <port>`**                                    | HTTP port; overrides **`http_port`** in the INI.                     |
-| **`--http-port <port>`**                           | Same; if both **`-p`** and **`--http-port`** are set, **`-p`** wins. |
-| **`--stop-after-init`**                            | After **`-i`** / **`-u`**, exit without starting HTTP.               |
-
-Examples:
-
-```bash
-go run . -- -c sumeru.conf -p 9090
-go run . -- -c sumeru.conf -d sumeru_staging
-go run . -- -c sumeru.conf -i company,user,sales --stop-after-init
-go run . -- -c /etc/sumeru/prod.conf --http-port 443
-go run . -- -c sumeru.conf -u my_module --stop-after-init
-```
-
----
-
-## INI `[options]` keys (`sumeru.conf`)
-
-Section header: **`[options]`**. Format: **`key = value`**. Lines starting with **`#`** or **`;`** are comments.
-
-Path keys (**`addons_path`**, **`sumeru_home`**, **`assets_path`**, **`templates_path`**, **`logo_path`**, **`brand_css`**, **`log_file`**, and similar) resolve **relative values from the INI file’s directory** (unless already absolute).
-
-### Required
-
-| Key               | Purpose                                                                                                                                          |
-| ----------------- | ------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **`db_host`**     | PostgreSQL host.                                                                                                                                 |
-| **`db_port`**     | PostgreSQL port.                                                                                                                                 |
-| **`db_user`**     | Database user.                                                                                                                                   |
-| **`db_password`** | Database password.                                                                                                                               |
-| **`db_name`**     | Database name (overridable with **`-d`** / **`--database`**).                                                                                    |
-| **`http_port`**   | HTTP listen port (overridable with **`-p`** / **`--http-port`**).                                                                                |
-| **`addons_path`** | Comma-separated directories; each immediate subfolder with **`manifest.json`** is an addon. Later roots override the same technical module name. |
-
-### Optional — database
-
-| Key              | Default   | Purpose                                    |
-| ---------------- | --------- | ------------------------------------------ |
-| **`db_sslmode`** | `disable` | PostgreSQL **`sslmode`** (e.g. `require`). |
-
-### Optional — workspace / paths
-
-| Key                  | Purpose                                                                                                                              |
-| -------------------- | ------------------------------------------------------------------------------------------------------------------------------------ |
-| **`sumeru_home`**    | Directory of the standard **`sumeru`** checkout. When set, omitted **`assets_path`** / **`templates_path`** default under this tree. |
-| **`assets_path`**    | Static files (CSS/JS). Default: **`core/engine/assets`** under **`sumeru_home`** when set.                                           |
-| **`templates_path`** | HTML templates. Default: **`core/engine/templates`** (same rules).                                                                   |
-
-### Optional — branding
-
-| Key                        | Purpose                                                                                      |
-| -------------------------- | -------------------------------------------------------------------------------------------- |
-| **`logo_path`**            | Image served at **`/static/app-logo`**.                                                      |
-| **`company_display_name`** | Header chip; if empty and **`company`** is installed, first **`core.company`** name is used. |
-| **`user_display_name`**    | Header label; if empty and **`user`** is installed, first **`core.user`** display is used.   |
-| **`brand_css`**            | Extra CSS linked as **`/static/brand.css`** after view stylesheets.                          |
-
-### Optional — logging (Zap JSON + optional lumberjack)
-
-| Key                    | Purpose                                                                                    |
-| ---------------------- | ------------------------------------------------------------------------------------------ |
-| **`log_stdout`**       | Default **true** — emit JSON logs to **stdout**.                                           |
-| **`log_file`**         | Optional second sink; path absolutized from the INI directory.                             |
-| **`log_rolling`**      | **false** = append-only; **true** = size-based rotation (lumberjack).                      |
-| **`log_max_size_mb`**  | Rotate after this many MB per file (default **100** when rolling is on and this is **0**). |
-| **`log_max_backups`**  | Number of rotated files to keep.                                                           |
-| **`log_max_age_days`** | Delete rotated files older than **N** days (**0** = no age-based pruning).                 |
-| **`dev_mode`**         | **true** → Zap **debug** level and other dev-only behavior in core.                        |
-
-Full annotated list (core-only defaults): **`../sumeru/sumeru.conf.example`**.
-
----
-
-## `sumeru-import-gen` (used by `make generate`)
-
-Invoked as:
-
-`go run $(SUMERU_ROOT)/cmd/sumeru-import-gen -root $(SUMERU_ROOT) -config <absolute-CONF> -out $(OUT) -package addonimports`
-
-| Flag           | Purpose                                                                                |
-| -------------- | -------------------------------------------------------------------------------------- |
-| **`-root`**    | Standard **`sumeru`** repo root (`module sumeru`).                                     |
-| **`-config`**  | Absolute path to the INI whose **`addons_path`** / **`sumeru_home`** define discovery. |
-| **`-out`**     | Generated `.go` file path (absolute **`OUT`** in this Makefile).                       |
-| **`-package`** | Go package name inside that file (here **`addonimports`**).                            |
+Configuration keys, server CLI flags (`-c`, `-d`, `-p`, `-i`, `-u`), and import-gen details: **[sumeru README](https://github.com/ProjectMeru/sumeru/blob/main/README.md)**, [Configuration guide](https://projectmeru.github.io/sumeru/docs/guides/start/configuration.html), [Tooling docs](https://projectmeru.github.io/sumeru/docs/guides/build/tooling.html).
 
 ## Documentation
 
-| Resource                                                                                      | Contents                                         |
-| --------------------------------------------------------------------------------------------- | ------------------------------------------------ |
-| This README                                                                                   | Workspace runner, `make generate`, custom addons |
-| [`sumeru/README.md`](https://github.com/ProjectMeru/sumeru/blob/main/README.md)               | Core engine, config, CLI                         |
-| [`sumeru_addons/README.md`](https://github.com/ProjectMeru/sumeru_addons/blob/main/README.md) | Standard business addon module                   |
+| Resource | Contents |
+| -------- | -------- |
+| This README | Workspace runner, daily workflow, custom addons |
+| [sumeru README](https://github.com/ProjectMeru/sumeru/blob/main/README.md) | Core engine, client assets, architecture |
+| [sumeru_addons README](https://github.com/ProjectMeru/sumeru_addons/blob/main/README.md) | Standard business apps |
+| [Documentation home](https://projectmeru.github.io/sumeru/docs/) | Guides and API reference |
+| [Creating an addon](https://projectmeru.github.io/sumeru/docs/guides/build/creating-an-addon.html) | Module authoring |
+
+## License
+
+Apache License 2.0 — see [LICENSE](LICENSE). Custom addons under `addons/` follow this license unless you specify otherwise for derived work.

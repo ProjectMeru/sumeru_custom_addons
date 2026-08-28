@@ -1,13 +1,33 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sumeru>
     <data>
-        <!-- sys.menu.name is globally unique; each label must differ from other addons (e.g. base "Configuration"). -->
         <menuitem id="menu_my_module_root" name="My Module" sequence="20" web_icon="shield" />
 
-        <menuitem id="menu_my_module_category" name="My module organization" parent="menu_my_module_root"
-            sequence="100" />
+        <menuitem id="menu_my_module_operations" name="Cookbook operations" parent="menu_my_module_root"
+            sequence="10" />
+        <menuitem id="menu_my_module_planning" name="Cookbook planning" parent="menu_my_module_root"
+            sequence="20" />
+        <menuitem id="menu_my_module_reporting" name="Cookbook reporting" parent="menu_my_module_root"
+            sequence="30" />
+        <menuitem id="menu_my_module_configuration" name="Cookbook configuration" parent="menu_my_module_root"
+            sequence="90" groups="my_module.group_my_module_manager" />
 
-        <menuitem id="menu_my_module_action" name="My module records" parent="menu_my_module_category"
+        <menuitem id="menu_my_module_records" name="Cookbook records" parent="menu_my_module_operations"
             action="action_my_module" sequence="10" />
+        <menuitem id="menu_my_module_lines" name="Cookbook lines" parent="menu_my_module_operations"
+            action="action_my_module_line" sequence="20" />
+
+        <menuitem id="menu_my_module_events" name="Cookbook events" parent="menu_my_module_planning"
+            action="action_my_module_event" sequence="10" />
+        <menuitem id="menu_my_module_places" name="Cookbook places" parent="menu_my_module_planning"
+            action="action_my_module_place" sequence="20" />
+
+        <menuitem id="menu_my_module_analysis" name="Cookbook analysis" parent="menu_my_module_reporting"
+            action="action_my_module_analysis" sequence="10" />
+
+        <menuitem id="menu_my_module_tags" name="Cookbook tags" parent="menu_my_module_configuration"
+            action="action_my_module_tag" sequence="10" groups="my_module.group_my_module_manager" />
+        <menuitem id="menu_my_module_categories" name="Cookbook categories" parent="menu_my_module_configuration"
+            action="action_my_module_category" sequence="20" groups="my_module.group_my_module_manager" />
     </data>
 </sumeru>
