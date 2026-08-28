@@ -6,7 +6,10 @@ replace sumeru => ../sumeru
 
 replace sumeru_addons => ../sumeru_addons
 
-require sumeru v0.0.0
+require (
+	sumeru v0.0.0
+	sumeru_addons v0.0.0-00010101000000-000000000000
+)
 
 require (
 	github.com/gorilla/websocket v1.5.3 // indirect
@@ -14,5 +17,4 @@ require (
 	github.com/lib/pq v1.12.3 // indirect
 	golang.org/x/crypto v0.55.0 // indirect
 	gopkg.in/natefinch/lumberjack.v2 v2.2.1 // indirect
-	sumeru_addons v0.0.0-00010101000000-000000000000 // indirect
 )
