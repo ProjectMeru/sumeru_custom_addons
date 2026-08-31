@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_project_cohort" model="engagement.project" type="cohort" date_start="date_start" interval="month" measure="amount" string="Cookbook">
+            <field name="date_start" />
+            <field name="amount" />
+        </view>
+    </data>
+</sumeru>

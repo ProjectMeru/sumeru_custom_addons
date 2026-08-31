@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <action id="action_engagement_project" type="window" model="engagement.project" name="Engagements"
+            view_mode="kanban,list,form,calendar,gantt">
+            <help>
+                <p class="sum-view-nocontent-smiling-face">
+                    Create a client engagement to explore workflow, relations, and every workspace view type.
+                </p>
+            </help>
+        </action>
+        <action id="action_engagement_analysis" type="window" model="engagement.project" name="Engagement analysis"
+            view_mode="graph,pivot,cohort,list" />
+        <action id="action_engagement_deliverable" type="window" model="engagement.deliverable" name="Deliverables"
+            view_mode="list,form" />
+        <action id="action_engagement_milestone" type="window" model="engagement.milestone" name="Milestones"
+            view_mode="calendar,gantt,list,form" />
+        <action id="action_engagement_site" type="window" model="engagement.site" name="Client sites"
+            view_mode="map,list,form" />
+        <action id="action_engagement_tag" type="window" model="engagement.tag" name="Tags"
+            view_mode="list,form" />
+        <action id="action_engagement_service_line" type="window" model="engagement.service_line" name="Service lines"
+            view_mode="list,form" />
+        <action id="action_engagement_contacts" type="window" model="core.partner" name="Contacts"
+            view_mode="list,form,kanban">
+            <help>
+                <p>Contacts form shows fields extended via <code>inherit=core.partner</code> from this module.</p>
+            </help>
+        </action>
+        <action id="action_engagement_tutorial" type="window" model="engagement.project" name="Tutorial"
+            view_mode="list,form">
+            <help>
+                <p><strong>Engagements Cookbook</strong> depends on <code>base</code>, <code>contacts</code>, <code>hr</code>, and <code>mail</code>.</p>
+                <p>See <code>README.md</code> in this addon for model inherit, view xpath, event hooks, and cross-module relations.</p>
+            </help>
+        </action>
+    </data>
+</sumeru>

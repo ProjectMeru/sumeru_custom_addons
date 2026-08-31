@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_project_search" model="engagement.project" type="search">
+            <field name="name" />
+            <field name="reference" />
+            <filter name="draft" string="Draft" domain='[["state","=","draft"]]' />
+            <filter name="state_active" string="In progress" domain='[["state","=","active"]]' />
+            <filter name="done" string="Done" domain='[["state","=","done"]]' />
+            <filter name="active_records" string="Active records" domain='[["active","=",true]]' />
+            <filter name="my" string="My records" domain='[["user_id","=","$uid"]]' />
+            <filter name="group_state" string="Status" group_by="state" />
+            <filter name="group_priority" string="Priority" group_by="priority" />
+        </view>
+    </data>
+</sumeru>

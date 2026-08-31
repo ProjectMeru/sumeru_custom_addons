@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<sumeru>
-    <data>
-        <view id="view_my_module_graph" model="my.module" type="graph" chart="bar" string="Cookbook">
-            <field name="state" type="row" />
-            <field name="amount" type="measure" />
-        </view>
-    </data>
-</sumeru>

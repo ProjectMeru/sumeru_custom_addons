@@ -95,7 +95,7 @@ The browser UI is built in **`../sumeru`**, not stored in git. Sources live unde
 
 ## Developing custom addons
 
-Put modules under **`addons/<technical_name>/`** with the usual layout (`manifest.json`, `init.go`, models, views, security). Reference sample: **`addons/my_module`**.
+Put modules under **`addons/<technical_name>/`** with the usual layout (`manifest.json`, `init.go`, models, views, security`). Reference tutorial: **`addons/engagement_cookbook`**.
 
 ```bash
 make new MODULE=my_app

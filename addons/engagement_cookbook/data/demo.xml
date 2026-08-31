@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data noupdate="1">
+        <record id="partner_acme" model="core.partner">
+            <field name="name">Acme Industries</field>
+            <field name="email">projects@acme.example.com</field>
+            <field name="phone">+1 555 0100</field>
+            <field name="is_company" eval="True" />
+            <field name="engagement_tier">premium</field>
+            <field name="strategic_account" eval="True" />
+        </record>
+        <record id="partner_globex" model="core.partner">
+            <field name="name">Globex Corporation</field>
+            <field name="email">it@globex.example.com</field>
+            <field name="phone">+1 555 0200</field>
+            <field name="is_company" eval="True" />
+            <field name="engagement_tier">standard</field>
+        </record>
+        <record id="partner_initech" model="core.partner">
+            <field name="name">Initech LLC</field>
+            <field name="email">ops@initech.example.com</field>
+            <field name="phone">+1 555 0300</field>
+            <field name="is_company" eval="True" />
+            <field name="engagement_tier">standard</field>
+        </record>
+
+        <record id="tag_strategic" model="engagement.tag">
+            <field name="name">Strategic</field>
+            <field name="color">#dc2626</field>
+            <field name="sequence">10</field>
+            <field name="description">Board-level visibility</field>
+        </record>
+        <record id="tag_fixed_bid" model="engagement.tag">
+            <field name="name">Fixed-bid</field>
+            <field name="color">#2563eb</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="tag_tm" model="engagement.tag">
+            <field name="name">T&amp;M</field>
+            <field name="color">#16a34a</field>
+            <field name="sequence">30</field>
+        </record>
+        <record id="tag_at_risk" model="engagement.tag">
+            <field name="name">At-risk</field>
+            <field name="color">#f59e0b</field>
+            <field name="sequence">40</field>
+        </record>
+
+        <record id="service_consulting" model="engagement.service_line">
+            <field name="name">Consulting</field>
+            <field name="sequence">10</field>
+            <field name="description">Advisory and discovery</field>
+            <field name="active" eval="True" />
+        </record>
+        <record id="service_implementation" model="engagement.service_line">
+            <field name="name">Implementation</field>
+            <field name="sequence">20</field>
+            <field name="description">Delivery and rollout</field>
+            <field name="active" eval="True" />
+        </record>
+        <record id="service_support" model="engagement.service_line">
+            <field name="name">Support</field>
+            <field name="sequence">30</field>
+            <field name="description">Managed services retainer</field>
+            <field name="active" eval="True" />
+        </record>
+
+        <record id="project_acme_erp" model="engagement.project">
+            <field name="name">Acme ERP Rollout</field>
+            <field name="reference">ENG-2026-001</field>
+            <field name="serial_number">DEMO-001</field>
+            <field name="kind">demo</field>
+            <field name="state">active</field>
+            <field name="priority">high</field>
+            <field name="amount">120000</field>
+            <field name="date_start">2026-01-06</field>
+            <field name="date_stop">2026-06-30</field>
+            <field name="progress_pct">35</field>
+            <field name="color_code">#2563eb</field>
+            <field name="email">pm@acme.example.com</field>
+            <field name="partner_id" ref="partner_acme" />
+            <field name="tag_ids" eval="[(4, ref('tag_strategic')), (4, ref('tag_fixed_bid'))]" />
+            <field name="service_line_ids" eval="[(4, ref('service_implementation'))]" />
+        </record>
+        <record id="project_globex_support" model="engagement.project">
+            <field name="name">Globex Support Retainer</field>
+            <field name="reference">ENG-2026-002</field>
+            <field name="serial_number">DEMO-002</field>
+            <field name="kind">demo</field>
+            <field name="state">active</field>
+            <field name="priority">normal</field>
+            <field name="amount">48000</field>
+            <field name="date_start">2026-01-01</field>
+            <field name="date_stop">2026-12-31</field>
+            <field name="progress_pct">60</field>
+            <field name="color_code">#16a34a</field>
+            <field name="partner_id" ref="partner_globex" />
+            <field name="tag_ids" eval="[(4, ref('tag_tm'))]" />
+            <field name="service_line_ids" eval="[(4, ref('service_support'))]" />
+        </record>
+        <record id="project_initech_discovery" model="engagement.project">
+            <field name="name">Initech Discovery Workshop</field>
+            <field name="reference">ENG-2026-003</field>
+            <field name="serial_number">DEMO-003</field>
+            <field name="kind">demo</field>
+            <field name="state">draft</field>
+            <field name="priority">low</field>
+            <field name="amount">15000</field>
+            <field name="date_start">2026-02-10</field>
+            <field name="date_stop">2026-03-15</field>
+            <field name="progress_pct">10</field>
+            <field name="partner_id" ref="partner_initech" />
+            <field name="service_line_ids" eval="[(4, ref('service_consulting'))]" />
+        </record>
+        <record id="project_acme_phase2" model="engagement.project">
+            <field name="name">Acme Phase 2 Analytics</field>
+            <field name="reference">ENG-2026-004</field>
+            <field name="serial_number">DEMO-004</field>
+            <field name="kind">demo</field>
+            <field name="state">done</field>
+            <field name="priority">normal</field>
+            <field name="amount">89000</field>
+            <field name="date_start">2025-09-01</field>
+            <field name="date_stop">2025-12-15</field>
+            <field name="progress_pct">100</field>
+            <field name="partner_id" ref="partner_acme" />
+            <field name="tag_ids" eval="[(4, ref('tag_strategic'))]" />
+        </record>
+        <record id="project_globex_migration" model="engagement.project">
+            <field name="name">Globex Data Migration</field>
+            <field name="reference">ENG-2026-005</field>
+            <field name="serial_number">DEMO-005</field>
+            <field name="kind">demo</field>
+            <field name="state">draft</field>
+            <field name="priority">high</field>
+            <field name="amount">72000</field>
+            <field name="date_start">2026-03-01</field>
+            <field name="date_stop">2026-08-31</field>
+            <field name="progress_pct">5</field>
+            <field name="partner_id" ref="partner_globex" />
+            <field name="tag_ids" eval="[(4, ref('tag_at_risk'))]" />
+            <field name="service_line_ids" eval="[(4, ref('service_implementation'))]" />
+        </record>
+
+        <record id="deliverable_acme_design" model="engagement.deliverable">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="name">Solution design</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">25000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="deliverable_acme_build" model="engagement.deliverable">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="name">Core module build</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">18000</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="deliverable_globex_sla" model="engagement.deliverable">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="name">Monthly SLA support</field>
+            <field name="quantity">12</field>
+            <field name="unit_price">4000</field>
+            <field name="sequence">10</field>
+        </record>
+
+        <record id="milestone_acme_kickoff" model="engagement.milestone">
+            <field name="name">Kickoff workshop</field>
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date_start">2026-01-06</field>
+            <field name="date_stop">2026-01-07</field>
+            <field name="state">done</field>
+        </record>
+        <record id="milestone_acme_uat" model="engagement.milestone">
+            <field name="name">UAT sign-off</field>
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date_start">2026-05-15</field>
+            <field name="date_stop">2026-05-22</field>
+            <field name="state">planned</field>
+        </record>
+        <record id="milestone_globex_qbr" model="engagement.milestone">
+            <field name="name">Q1 business review</field>
+            <field name="project_id" ref="project_globex_support" />
+            <field name="date_start">2026-03-28</field>
+            <field name="date_stop">2026-03-28</field>
+            <field name="state">planned</field>
+        </record>
+
+        <record id="site_acme_bengaluru" model="engagement.site">
+            <field name="name">Acme Bengaluru HQ</field>
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="latitude">12.9716</field>
+            <field name="longitude">77.5946</field>
+            <field name="color">#2563eb</field>
+            <field name="partner_id" ref="partner_acme" />
+        </record>
+        <record id="site_globex_delhi" model="engagement.site">
+            <field name="name">Globex Delhi office</field>
+            <field name="project_id" ref="project_globex_support" />
+            <field name="latitude">28.6139</field>
+            <field name="longitude">77.2090</field>
+            <field name="color">#16a34a</field>
+            <field name="partner_id" ref="partner_globex" />
+        </record>
+        <record id="site_initech_mumbai" model="engagement.site">
+            <field name="name">Initech Mumbai lab</field>
+            <field name="project_id" ref="project_initech_discovery" />
+            <field name="latitude">19.0760</field>
+            <field name="longitude">72.8777</field>
+            <field name="color">#dc2626</field>
+            <field name="partner_id" ref="partner_initech" />
+        </record>
+    </data>
+</sumeru>

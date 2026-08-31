@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_service_line_list" model="engagement.service_line" type="list">
+            <field name="sequence" widget="handle" />
+            <field name="name" />
+            <field name="active" widget="boolean_toggle" />
+        </view>
+        <view id="view_engagement_service_line_form" model="engagement.service_line" type="form">
+            <sheet>
+                <div class="sum_title">
+                    <h1>
+                        <field name="name" placeholder="Category name..." />
+                    </h1>
+                </div>
+                <group>
+                    <field name="sequence" />
+                    <field name="active" widget="boolean_toggle" />
+                    <field name="description" widget="text" />
+                </group>
+            </sheet>
+        </view>
+        <view id="view_engagement_service_line_search" model="engagement.service_line" type="search">
+            <field name="name" />
+        </view>
+    </data>
+</sumeru>

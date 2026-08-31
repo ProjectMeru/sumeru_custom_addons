@@ -1,0 +1,31 @@
+{
+  "name": "engagement_cookbook",
+  "display_name": "Engagements Cookbook",
+  "version": "2.0.0",
+  "author": "Project Meru",
+  "description": "Professional services engagement tutorial: multi-model app, field widgets, view types, module depends, model/view inherit, and event bridges.",
+  "depends": ["base", "contacts", "hr", "mail"],
+  "application": true,
+  "data": [
+    "security/security.xml",
+    "security/sys.access.csv",
+    "data/demo.xml",
+    "views/form_view.xml",
+    "views/list_view.xml",
+    "views/kanban_view.xml",
+    "views/search_view.xml",
+    "views/graph_view.xml",
+    "views/pivot_view.xml",
+    "views/calendar_view.xml",
+    "views/gantt_view.xml",
+    "views/cohort_view.xml",
+    "views/event_views.xml",
+    "views/place_views.xml",
+    "views/tag_views.xml",
+    "views/category_views.xml",
+    "views/line_views.xml",
+    "views/partner_inherit_views.xml",
+    "views/actions.xml",
+    "views/menus.xml"
+  ]
+}

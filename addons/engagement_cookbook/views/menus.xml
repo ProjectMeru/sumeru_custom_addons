@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <menuitem id="menu_engagement_root" name="Engagements Cookbook" sequence="20" web_icon="briefcase" />
+
+        <menuitem id="menu_engagement_operations" name="Operations" parent="menu_engagement_root" sequence="10" />
+        <menuitem id="menu_engagement_planning" name="Planning" parent="menu_engagement_root" sequence="20" />
+        <menuitem id="menu_engagement_analytics" name="Analytics" parent="menu_engagement_root" sequence="30" />
+        <menuitem id="menu_engagement_clients" name="Clients" parent="menu_engagement_root" sequence="40" />
+        <menuitem id="menu_engagement_configuration" name="Configuration" parent="menu_engagement_root"
+            sequence="90" groups="engagement_cookbook.group_engagement_cookbook_manager" />
+
+        <menuitem id="menu_engagement_projects" name="Engagements" parent="menu_engagement_operations"
+            action="action_engagement_project" sequence="10" />
+        <menuitem id="menu_engagement_deliverables" name="Deliverables" parent="menu_engagement_operations"
+            action="action_engagement_deliverable" sequence="20" />
+
+        <menuitem id="menu_engagement_milestones" name="Milestones" parent="menu_engagement_planning"
+            action="action_engagement_milestone" sequence="10" />
+        <menuitem id="menu_engagement_sites" name="Client sites" parent="menu_engagement_planning"
+            action="action_engagement_site" sequence="20" />
+
+        <menuitem id="menu_engagement_analysis" name="Engagement analysis" parent="menu_engagement_analytics"
+            action="action_engagement_analysis" sequence="10" />
+
+        <menuitem id="menu_engagement_contacts" name="Contacts (extended)" parent="menu_engagement_clients"
+            action="action_engagement_contacts" sequence="10" />
+
+        <menuitem id="menu_engagement_tags" name="Tags" parent="menu_engagement_configuration"
+            action="action_engagement_tag" sequence="10" groups="engagement_cookbook.group_engagement_cookbook_manager" />
+        <menuitem id="menu_engagement_service_lines" name="Service lines" parent="menu_engagement_configuration"
+            action="action_engagement_service_line" sequence="20" groups="engagement_cookbook.group_engagement_cookbook_manager" />
+        <menuitem id="menu_engagement_tutorial" name="About / tutorial" parent="menu_engagement_configuration"
+            action="action_engagement_tutorial" sequence="99" groups="engagement_cookbook.group_engagement_cookbook_manager" />
+    </data>
+</sumeru>

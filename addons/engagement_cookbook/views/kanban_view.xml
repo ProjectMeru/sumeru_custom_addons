@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_project_kanban" model="engagement.project" type="kanban"
+            default_group_by="state" records_draggable="1">
+            <field name="state" />
+            <field name="avatar" widget="image" />
+            <field name="name" />
+            <field name="reference" />
+            <field name="priority" widget="priority" options="mode:stars,stars:5" />
+            <field name="subtotal" widget="monetary" />
+            <field name="active" widget="boolean_toggle" />
+        </view>
+    </data>
+</sumeru>

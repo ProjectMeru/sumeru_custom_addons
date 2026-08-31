@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <record id="view_engagement_partner_inherit" model="sys.view">
+            <field name="inherit_id" ref="contacts.view_core_partner_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//field[@name='phone']" position="after">
+                    <field name="engagement_tier" string="Engagement Tier"/>
+                    <field name="strategic_account" string="Strategic Account"/>
+                </xpath>
+            </field>
+        </record>
+    </data>
+</sumeru>

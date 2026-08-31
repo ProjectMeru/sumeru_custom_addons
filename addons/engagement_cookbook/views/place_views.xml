@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_site_list" model="engagement.site" type="list">
+            <field name="name" />
+            <field name="latitude" />
+            <field name="longitude" />
+            <field name="color" widget="color" />
+            <field name="partner_id" />
+            <field name="active" widget="boolean_toggle" />
+        </view>
+        <view id="view_engagement_site_form" model="engagement.site" type="form">
+            <sheet>
+                <div class="sum_title">
+                    <h1>
+                        <field name="name" placeholder="Place name..." />
+                    </h1>
+                </div>
+                <group>
+                    <group string="Location">
+                        <field name="latitude" />
+                        <field name="longitude" />
+                        <field name="color" widget="color" />
+                    </group>
+                    <group string="Details">
+                        <field name="project_id" widget="many2one" />
+                        <field name="partner_id" widget="many2one" />
+                        <field name="active" widget="boolean_toggle" />
+                    </group>
+                </group>
+            </sheet>
+        </view>
+        <view id="view_engagement_site_search" model="engagement.site" type="search">
+            <field name="name" />
+            <filter name="active" string="Active" domain='[["active","=",true]]' />
+        </view>
+        <view id="view_engagement_site_map" model="engagement.site" type="map" latitude="latitude" longitude="longitude" string="Places">
+            <field name="name" />
+            <field name="latitude" />
+            <field name="longitude" />
+        </view>
+    </data>
+</sumeru>

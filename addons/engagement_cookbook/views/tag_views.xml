@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_tag_list" model="engagement.tag" type="list">
+            <field name="sequence" widget="handle" />
+            <field name="name" />
+            <field name="color" widget="color" />
+        </view>
+        <view id="view_engagement_tag_form" model="engagement.tag" type="form">
+            <sheet>
+                <div class="sum_title">
+                    <h1>
+                        <field name="name" placeholder="Tag name..." />
+                    </h1>
+                </div>
+                <group>
+                    <field name="color" widget="color" />
+                    <field name="sequence" />
+                    <field name="description" widget="text" />
+                </group>
+            </sheet>
+        </view>
+        <view id="view_engagement_tag_search" model="engagement.tag" type="search">
+            <field name="name" />
+        </view>
+    </data>
+</sumeru>

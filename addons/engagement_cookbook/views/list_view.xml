@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_project_list" model="engagement.project" type="list">
+            <field name="sequence" widget="handle" />
+            <field name="name" />
+            <field name="reference" />
+            <field name="state" />
+            <field name="kind" />
+            <field name="priority" widget="priority" options="mode:stars,stars:5" />
+            <field name="company_id" />
+            <field name="amount" />
+            <field name="subtotal" widget="monetary" />
+            <field name="date_start" />
+            <field name="date_stop" />
+            <field name="progress_pct" widget="progressbar" />
+            <field name="active" widget="boolean_toggle" />
+        </view>
+    </data>
+</sumeru>

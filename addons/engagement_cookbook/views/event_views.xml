@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_milestone_list" model="engagement.milestone" type="list">
+            <field name="name" />
+            <field name="project_id" />
+            <field name="user_id" />
+            <field name="date_start" />
+            <field name="date_stop" />
+            <field name="state" />
+        </view>
+        <view id="view_engagement_milestone_form" model="engagement.milestone" type="form">
+            <header>
+                <button name="action_plan" string="Plan" type="object" class="sum_highlight" />
+                <button name="action_done" string="Done" type="object" />
+                <button name="action_reset_draft" string="Reset" type="object" />
+                <field name="state" widget="statusbar" options="clickable:1" />
+            </header>
+            <sheet>
+                <div class="sum_title">
+                    <h1>
+                        <field name="name" placeholder="Milestone name..." />
+                    </h1>
+                </div>
+                <group>
+                    <group string="Schedule">
+                        <field name="date_start" widget="date" />
+                        <field name="date_stop" widget="date" />
+                    </group>
+                    <group string="Team">
+                        <field name="project_id" widget="many2one" />
+                        <field name="user_id" widget="many2one" />
+                        <field name="employee_id" widget="many2one" />
+                    </group>
+                </group>
+            </sheet>
+        </view>
+        <view id="view_engagement_milestone_search" model="engagement.milestone" type="search">
+            <field name="name" />
+            <filter name="draft" string="Draft" domain='[["state","=","draft"]]' />
+            <filter name="planned" string="Planned" domain='[["state","=","planned"]]' />
+            <filter name="done" string="Done" domain='[["state","=","done"]]' />
+            <filter name="group_state" string="Status" group_by="state" />
+        </view>
+        <view id="view_engagement_milestone_calendar" model="engagement.milestone" type="calendar" date_start="date_start" string="Events">
+            <field name="name" />
+            <field name="date_start" />
+            <field name="user_id" />
+        </view>
+        <view id="view_engagement_milestone_gantt" model="engagement.milestone" type="gantt" date_start="date_start" date_stop="date_stop" string="Events">
+            <field name="name" />
+            <field name="date_start" />
+            <field name="date_stop" />
+        </view>
+    </data>
+</sumeru>
