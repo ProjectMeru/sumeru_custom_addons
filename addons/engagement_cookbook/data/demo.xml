@@ -23,6 +23,21 @@
             <field name="is_company" eval="True" />
             <field name="engagement_tier">standard</field>
         </record>
+        <record id="partner_stark" model="core.partner">
+            <field name="name">Stark Industries</field>
+            <field name="email">contracts@stark.example.com</field>
+            <field name="phone">+1 555 0400</field>
+            <field name="is_company" eval="True" />
+            <field name="engagement_tier">premium</field>
+            <field name="strategic_account" eval="True" />
+        </record>
+        <record id="partner_wayne" model="core.partner">
+            <field name="name">Wayne Enterprises</field>
+            <field name="email">procurement@wayne.example.com</field>
+            <field name="phone">+1 555 0500</field>
+            <field name="is_company" eval="True" />
+            <field name="engagement_tier">standard</field>
+        </record>
 
         <record id="tag_strategic" model="engagement.tag">
             <field name="name">Strategic</field>
@@ -69,7 +84,7 @@
             <field name="name">Acme ERP Rollout</field>
             <field name="reference">ENG-2026-001</field>
             <field name="serial_number">DEMO-001</field>
-            <field name="kind">demo</field>
+            <field name="kind">engagement</field>
             <field name="state">active</field>
             <field name="priority">high</field>
             <field name="amount">120000</field>
@@ -86,7 +101,7 @@
             <field name="name">Globex Support Retainer</field>
             <field name="reference">ENG-2026-002</field>
             <field name="serial_number">DEMO-002</field>
-            <field name="kind">demo</field>
+            <field name="kind">engagement</field>
             <field name="state">active</field>
             <field name="priority">normal</field>
             <field name="amount">48000</field>
@@ -141,6 +156,50 @@
             <field name="tag_ids" eval="[(4, ref('tag_at_risk'))]" />
             <field name="service_line_ids" eval="[(4, ref('service_implementation'))]" />
         </record>
+        <record id="project_stark_audit" model="engagement.project">
+            <field name="name">Stark Security Audit</field>
+            <field name="reference">ENG-2026-006</field>
+            <field name="serial_number">DEMO-006</field>
+            <field name="kind">engagement</field>
+            <field name="state">active</field>
+            <field name="priority">low</field>
+            <field name="amount">34000</field>
+            <field name="date_start">2026-02-01</field>
+            <field name="date_stop">2026-04-30</field>
+            <field name="progress_pct">45</field>
+            <field name="partner_id" ref="partner_stark" />
+            <field name="tag_ids" eval="[(4, ref('tag_fixed_bid'))]" />
+            <field name="service_line_ids" eval="[(4, ref('service_consulting'))]" />
+        </record>
+        <record id="project_wayne_portal" model="engagement.project">
+            <field name="name">Wayne Client Portal</field>
+            <field name="reference">ENG-2026-007</field>
+            <field name="serial_number">DEMO-007</field>
+            <field name="kind">demo</field>
+            <field name="state">done</field>
+            <field name="priority">normal</field>
+            <field name="amount">56000</field>
+            <field name="date_start">2025-11-01</field>
+            <field name="date_stop">2026-01-31</field>
+            <field name="progress_pct">100</field>
+            <field name="completed_at">2026-01-31 17:00:00</field>
+            <field name="partner_id" ref="partner_wayne" />
+            <field name="service_line_ids" eval="[(4, ref('service_implementation'))]" />
+        </record>
+        <record id="project_initech_pilot" model="engagement.project">
+            <field name="name">Initech Pilot Rollout</field>
+            <field name="reference">ENG-2026-008</field>
+            <field name="serial_number">DEMO-008</field>
+            <field name="kind">engagement</field>
+            <field name="state">draft</field>
+            <field name="priority">low</field>
+            <field name="amount">22000</field>
+            <field name="date_start">2026-04-01</field>
+            <field name="date_stop">2026-05-31</field>
+            <field name="progress_pct">0</field>
+            <field name="partner_id" ref="partner_initech" />
+            <field name="tag_ids" eval="[(4, ref('tag_tm'))]" />
+        </record>
 
         <record id="deliverable_acme_design" model="engagement.deliverable">
             <field name="project_id" ref="project_acme_erp" />
@@ -161,6 +220,63 @@
             <field name="name">Monthly SLA support</field>
             <field name="quantity">12</field>
             <field name="unit_price">4000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="deliverable_acme_training" model="engagement.deliverable">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="name">End-user training</field>
+            <field name="quantity">2</field>
+            <field name="unit_price">8000</field>
+            <field name="sequence">30</field>
+            <field name="note">Two workshop sessions</field>
+        </record>
+        <record id="deliverable_acme_uat" model="engagement.deliverable">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="name">UAT support</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">12000</field>
+            <field name="sequence">40</field>
+        </record>
+        <record id="deliverable_globex_monitoring" model="engagement.deliverable">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="name">Infrastructure monitoring</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">6000</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="deliverable_initech_workshop" model="engagement.deliverable">
+            <field name="project_id" ref="project_initech_discovery" />
+            <field name="name">Discovery workshop</field>
+            <field name="quantity">3</field>
+            <field name="unit_price">5000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="deliverable_stark_assessment" model="engagement.deliverable">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="name">Security assessment report</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">18000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="deliverable_stark_remediation" model="engagement.deliverable">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="name">Remediation playbook</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">16000</field>
+            <field name="sequence">20</field>
+        </record>
+        <record id="deliverable_wayne_portal" model="engagement.deliverable">
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="name">Portal MVP</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">56000</field>
+            <field name="sequence">10</field>
+        </record>
+        <record id="deliverable_globex_migration" model="engagement.deliverable">
+            <field name="project_id" ref="project_globex_migration" />
+            <field name="name">Data migration runbook</field>
+            <field name="quantity">1</field>
+            <field name="unit_price">22000</field>
             <field name="sequence">10</field>
         </record>
 
@@ -184,6 +300,41 @@
             <field name="date_start">2026-03-28</field>
             <field name="date_stop">2026-03-28</field>
             <field name="state">planned</field>
+        </record>
+        <record id="milestone_acme_go_live" model="engagement.milestone">
+            <field name="name">Go-live</field>
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date_start">2026-06-15</field>
+            <field name="date_stop">2026-06-20</field>
+            <field name="state">planned</field>
+        </record>
+        <record id="milestone_stark_kickoff" model="engagement.milestone">
+            <field name="name">Audit kickoff</field>
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date_start">2026-02-03</field>
+            <field name="date_stop">2026-02-03</field>
+            <field name="state">done</field>
+        </record>
+        <record id="milestone_stark_report" model="engagement.milestone">
+            <field name="name">Final report delivery</field>
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date_start">2026-04-25</field>
+            <field name="date_stop">2026-04-25</field>
+            <field name="state">planned</field>
+        </record>
+        <record id="milestone_wayne_launch" model="engagement.milestone">
+            <field name="name">Portal launch</field>
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="date_start">2026-01-31</field>
+            <field name="date_stop">2026-01-31</field>
+            <field name="state">done</field>
+        </record>
+        <record id="milestone_initech_scoping" model="engagement.milestone">
+            <field name="name">Scoping session</field>
+            <field name="project_id" ref="project_initech_discovery" />
+            <field name="date_start">2026-02-12</field>
+            <field name="date_stop">2026-02-12</field>
+            <field name="state">draft</field>
         </record>
 
         <record id="site_acme_bengaluru" model="engagement.site">
@@ -209,6 +360,194 @@
             <field name="longitude">72.8777</field>
             <field name="color">#dc2626</field>
             <field name="partner_id" ref="partner_initech" />
+        </record>
+        <record id="site_stark_malibu" model="engagement.site">
+            <field name="name">Stark Malibu campus</field>
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="latitude">34.0259</field>
+            <field name="longitude">-118.7798</field>
+            <field name="color">#7c3aed</field>
+            <field name="partner_id" ref="partner_stark" />
+        </record>
+        <record id="site_wayne_gotham" model="engagement.site">
+            <field name="name">Wayne Tower</field>
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="latitude">40.7128</field>
+            <field name="longitude">-74.0060</field>
+            <field name="color">#1f2937</field>
+            <field name="partner_id" ref="partner_wayne" />
+        </record>
+
+        <record id="timesheet_acme_dev_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-01-10</field>
+            <field name="hours">6.5</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">150</field>
+            <field name="description">Core module scaffolding</field>
+        </record>
+        <record id="timesheet_acme_dev_2" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-01-17</field>
+            <field name="hours">8</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">150</field>
+            <field name="description">Integration APIs</field>
+        </record>
+        <record id="timesheet_acme_qa_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-01-24</field>
+            <field name="hours">4</field>
+            <field name="category">qa</field>
+            <field name="billable" eval="True" />
+            <field name="rate">120</field>
+            <field name="description">Smoke test pass</field>
+        </record>
+        <record id="timesheet_acme_pm_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-02-01</field>
+            <field name="hours">3</field>
+            <field name="category">pm</field>
+            <field name="billable" eval="True" />
+            <field name="rate">175</field>
+            <field name="description">Sprint planning</field>
+        </record>
+        <record id="timesheet_globex_support_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="date">2026-01-08</field>
+            <field name="hours">2</field>
+            <field name="category">support</field>
+            <field name="billable" eval="True" />
+            <field name="rate">95</field>
+            <field name="description">Ticket triage</field>
+        </record>
+        <record id="timesheet_globex_support_2" model="engagement.timesheet">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="date">2026-01-15</field>
+            <field name="hours">5</field>
+            <field name="category">support</field>
+            <field name="billable" eval="True" />
+            <field name="rate">95</field>
+            <field name="description">SLA incident response</field>
+        </record>
+        <record id="timesheet_globex_support_3" model="engagement.timesheet">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="date">2026-01-22</field>
+            <field name="hours">1.5</field>
+            <field name="category">support</field>
+            <field name="billable" eval="False" />
+            <field name="rate">0</field>
+            <field name="description">Internal knowledge base update</field>
+        </record>
+        <record id="timesheet_stark_dev_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date">2026-02-05</field>
+            <field name="hours">7</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">160</field>
+            <field name="description">Pen test tooling setup</field>
+        </record>
+        <record id="timesheet_stark_qa_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date">2026-02-12</field>
+            <field name="hours">6</field>
+            <field name="category">qa</field>
+            <field name="billable" eval="True" />
+            <field name="rate">130</field>
+            <field name="description">Vulnerability validation</field>
+        </record>
+        <record id="timesheet_stark_pm_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date">2026-02-19</field>
+            <field name="hours">9</field>
+            <field name="category">pm</field>
+            <field name="billable" eval="True" />
+            <field name="rate">180</field>
+            <field name="description">Steering committee prep and follow-up notes</field>
+        </record>
+        <record id="timesheet_wayne_dev_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="date">2025-12-10</field>
+            <field name="hours">8</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">145</field>
+            <field name="description">Portal authentication module</field>
+        </record>
+        <record id="timesheet_wayne_dev_2" model="engagement.timesheet">
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="date">2025-12-17</field>
+            <field name="hours">6</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">145</field>
+            <field name="description">Dashboard widgets</field>
+        </record>
+        <record id="timesheet_initech_pm_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_initech_discovery" />
+            <field name="date">2026-02-11</field>
+            <field name="hours">4</field>
+            <field name="category">pm</field>
+            <field name="billable" eval="True" />
+            <field name="rate">165</field>
+            <field name="description">Workshop agenda</field>
+        </record>
+        <record id="timesheet_globex_migration_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_globex_migration" />
+            <field name="date">2026-03-05</field>
+            <field name="hours">3.5</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">140</field>
+            <field name="description">Migration script prototype</field>
+        </record>
+        <record id="timesheet_acme_dev_3" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-02-08</field>
+            <field name="hours">10</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">150</field>
+            <field name="description">Extended cutover weekend work</field>
+        </record>
+        <record id="timesheet_globex_support_4" model="engagement.timesheet">
+            <field name="project_id" ref="project_globex_support" />
+            <field name="date">2026-02-03</field>
+            <field name="hours">4.5</field>
+            <field name="category">support</field>
+            <field name="billable" eval="True" />
+            <field name="rate">95</field>
+            <field name="description">Monthly health check</field>
+        </record>
+        <record id="timesheet_stark_dev_2" model="engagement.timesheet">
+            <field name="project_id" ref="project_stark_audit" />
+            <field name="date">2026-02-26</field>
+            <field name="hours">5.5</field>
+            <field name="category">dev</field>
+            <field name="billable" eval="True" />
+            <field name="rate">160</field>
+            <field name="description">Firewall rule review automation</field>
+        </record>
+        <record id="timesheet_wayne_qa_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_wayne_portal" />
+            <field name="date">2026-01-10</field>
+            <field name="hours">4</field>
+            <field name="category">qa</field>
+            <field name="billable" eval="True" />
+            <field name="rate">125</field>
+            <field name="description">UAT regression suite</field>
+        </record>
+        <record id="timesheet_acme_support_1" model="engagement.timesheet">
+            <field name="project_id" ref="project_acme_erp" />
+            <field name="date">2026-02-15</field>
+            <field name="hours">2</field>
+            <field name="category">support</field>
+            <field name="billable" eval="False" />
+            <field name="rate">0</field>
+            <field name="description">Internal documentation</field>
         </record>
     </data>
 </sumeru>

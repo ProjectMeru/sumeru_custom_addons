@@ -38,3 +38,12 @@ const (
 	TierPremium   EngagementTier = "premium"
 	TierStrategic EngagementTier = "strategic"
 )
+
+type TimesheetCategory string
+
+const (
+	TimesheetCategoryDev     TimesheetCategory = "dev"
+	TimesheetCategoryQA      TimesheetCategory = "qa"
+	TimesheetCategoryPM      TimesheetCategory = "pm"
+	TimesheetCategorySupport TimesheetCategory = "support"
+)

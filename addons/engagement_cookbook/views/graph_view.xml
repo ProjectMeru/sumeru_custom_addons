@@ -1,8 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sumeru>
     <data>
-        <view id="view_engagement_project_graph" model="engagement.project" type="graph" chart="bar" string="Cookbook">
+        <view id="view_engagement_project_graph" model="engagement.project" type="graph" chart="bar" string="Budget by status">
             <field name="state" type="row" />
+            <field name="amount" type="measure" />
+        </view>
+        <view id="view_engagement_project_graph_line" model="engagement.project" type="graph" chart="line" string="Budget by priority">
+            <field name="priority" type="row" />
+            <field name="amount" type="measure" />
+        </view>
+        <view id="view_engagement_project_graph_pie" model="engagement.project" type="graph" chart="pie" string="Budget by kind">
+            <field name="kind" type="row" />
             <field name="amount" type="measure" />
         </view>
     </data>

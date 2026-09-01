@@ -13,6 +13,10 @@
             view_mode="graph,pivot,cohort,list" />
         <action id="action_engagement_deliverable" type="window" model="engagement.deliverable" name="Deliverables"
             view_mode="list,form" />
+        <action id="action_engagement_timesheet" type="window" model="engagement.timesheet" name="Timesheets"
+            view_mode="list,form" />
+        <action id="action_engagement_timesheet_analysis" type="window" model="engagement.timesheet" name="Timesheet analysis"
+            view_mode="graph,list,form" />
         <action id="action_engagement_milestone" type="window" model="engagement.milestone" name="Milestones"
             view_mode="calendar,gantt,list,form" />
         <action id="action_engagement_site" type="window" model="engagement.site" name="Client sites"

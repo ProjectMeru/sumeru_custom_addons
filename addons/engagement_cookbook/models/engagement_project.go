@@ -72,6 +72,7 @@ type EngagementProject struct {
 	DeliverableIds  sdk.One2Many[EngagementDeliverable]  `sumeru:"string=Deliverables"`
 	SiteIds         sdk.One2Many[EngagementSite]         `sumeru:"string=Client Sites"`
 	MilestoneIds    sdk.One2Many[EngagementMilestone]    `sumeru:"string=Milestones"`
+	TimesheetIds    sdk.One2Many[EngagementTimesheet]    `sumeru:"string=Timesheets"`
 
 	ResourceRef   sdk.Reference         `sumeru:"string=Resource Ref"`
 	ResourceModel sdk.String            `sumeru:"string=Resource Model"`

@@ -1,9 +1,9 @@
 {
   "name": "engagement_cookbook",
   "display_name": "Engagements Cookbook",
-  "version": "2.0.0",
+  "version": "2.1.0",
   "author": "Project Meru",
-  "description": "Professional services engagement tutorial: multi-model app, field widgets, view types, module depends, model/view inherit, and event bridges.",
+  "description": "Professional services engagement tutorial: multi-model app, field widgets, view types, reporting, bulk import, conditional fields, and event bridges.",
   "depends": ["base", "contacts", "hr", "mail"],
   "application": true,
   "data": [
@@ -24,6 +24,7 @@
     "views/tag_views.xml",
     "views/category_views.xml",
     "views/line_views.xml",
+    "views/timesheet_views.xml",
     "views/partner_inherit_views.xml",
     "views/actions.xml",
     "views/menus.xml"

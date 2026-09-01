@@ -2,6 +2,7 @@
 <sumeru>
     <data>
         <view id="view_engagement_project_list" model="engagement.project" type="list">
+            <report download="csv,xlsx,pdf" pdf_sizes="a4,letter"/>
             <field name="sequence" widget="handle" />
             <field name="name" />
             <field name="reference" />

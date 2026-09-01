@@ -1,6 +1,6 @@
 # Engagements Cookbook
 
-**Professional services tutorial app** for custom-module authors in `sumeru_custom_addons`. It models client engagements end-to-end while demonstrating every major Sumeru addon pattern: multi-model apps, field widgets, view types, **`depends`**, **model inherit**, **view xpath inherit**, cross-module relations, and **event bridges**.
+**Professional services tutorial app** for custom-module authors in `sumeru_custom_addons`. It models client engagements end-to-end while demonstrating every major Sumeru addon pattern: multi-model apps, field widgets, view types, **reporting**, **bulk import**, **conditional fields**, **`depends`**, **model inherit**, **view xpath inherit**, cross-module relations, and **event bridges**.
 
 ## Install
 
@@ -15,6 +15,8 @@ make run
 Open **Engagements Cookbook** in the Apps launcher. Demo data loads from `data/demo.xml` (`noupdate="1"`).
 
 **Migrating from `my_module`:** technical names and tables changed in v2. Use a fresh database or uninstall the old module before installing `engagement_cookbook`.
+
+**Upgrading to v2.1:** run `make generate` then `make update MODULES=engagement_cookbook` to add the `engagement.timesheet` model and new views.
 
 ## Module dependencies
 
@@ -38,6 +40,7 @@ After changing `depends` or cross-module field types, run **`make generate`** so
 | `engagement.project` | Client engagement — workflow, budget, relations, widgets |
 | `engagement.deliverable` | Billable lines with computed `line_total` |
 | `engagement.milestone` | Calendar / gantt milestones with object actions |
+| `engagement.timesheet` | Time entries — flat model for bulk CSV import |
 | `engagement.site` | Client sites on the map view |
 | `engagement.tag` | Engagement labels |
 | `engagement.service_line` | Consulting / implementation / support lines |
@@ -48,11 +51,82 @@ After changing `depends` or cross-module field types, run **`make generate`** so
 |---------|------|------------|
 | Operations | Engagements | kanban, list, form, calendar, gantt |
 | Operations | Deliverables | list, form |
+| Operations | Timesheets | list, form |
 | Planning | Milestones | calendar, gantt, list, form |
 | Planning | Client sites | map, list, form |
 | Analytics | Engagement analysis | graph, pivot, cohort, list |
+| Analytics | Timesheet analysis | graph, list, form |
 | Clients | Contacts (extended) | list, form, kanban |
 | Configuration | Tags, Service lines, About / tutorial | manager only |
+
+## Dynamic field conditions
+
+Sumeru evaluates **expression attributes** on fields at runtime (see `sumeru_docs/core/reference/field-attributes.md`):
+
+```xml
+<field name="completed_at" invisible="state != 'done'"/>
+<field name="archived" readonly="state == 'done'"/>
+<field name="description" required="kind == 'engagement'"/>
+```
+
+| Model | Field | Modifier | Expression |
+|-------|-------|----------|------------|
+| `engagement.project` | `completed_at` | invisible | `state != 'done'` |
+| `engagement.project` | `archived` | readonly | `state == 'done'` |
+| `engagement.project` | `description` | required | `kind == 'engagement'` |
+| `engagement.project` | `date_stop` | required | `state == 'active'` |
+| `engagement.deliverable` | `note` | required | `quantity > 1` |
+| `engagement.milestone` | `date_stop` | required | `state == 'planned'` |
+| `engagement.milestone` | `employee_id` | invisible | `state == 'draft'` |
+| `engagement.timesheet` | `rate` | invisible | `billable == false` |
+| `engagement.timesheet` | `description` | required | `hours > 8` |
+
+Toggle **Status** and **Kind** on an engagement form (Overview → Conditions demo) to see fields appear, lock, or become required.
+
+## Reporting (CSV, XLSX, PDF)
+
+List and form views declare export via a `<report>` child — no addon Go code required:
+
+```xml
+<report download="csv,xlsx,pdf" pdf_sizes="a4,letter"/>
+```
+
+| View | Formats | Bulk upload |
+|------|---------|-------------|
+| Engagements list | CSV, XLSX, PDF | — |
+| Engagement form | CSV, PDF | — |
+| Deliverables list | CSV, XLSX, PDF | CSV |
+| Timesheets list | CSV, XLSX, PDF | CSV |
+| Milestones list | CSV, PDF | — |
+
+Use the **Report** menu on the list toolbar. Exports respect the current search domain (max **500 rows**). PDF supports A4 and Letter page sizes.
+
+**Charts vs exports:** graph views (bar, line, pie) are interactive Chart.js analytics in the **Analytics** menus. They are separate from tabular XLSX/CSV downloads — Excel files do not embed charts.
+
+## Bulk import
+
+Enable bulk CSV upload on a list view:
+
+```xml
+<report download="csv,xlsx,pdf" upload="bulk" modes="create,upsert"/>
+```
+
+Workflow on **Timesheets** or **Deliverables**:
+
+1. Report → **Bulk upload CSV** (or download template first)
+2. Map CSV columns to model fields in the mapping wizard
+3. Preview first 10 rows, then confirm import
+
+Import is **CSV only** (not XLSX upload). Max file size **8 MB**. See `sumeru_docs/business/platform/export-and-import.md`.
+
+## Graph views
+
+| Menu | Chart types | Dimensions |
+|------|-------------|------------|
+| Engagement analysis | bar, line, pie | state / priority / kind × amount |
+| Timesheet analysis | bar, pie | category / project × hours |
+
+Switch chart type via the view switcher when multiple graph views exist for the same model.
 
 ## Model inherit (`inherit=`)
 

@@ -2,6 +2,7 @@
 <sumeru>
     <data>
         <view id="view_engagement_project_form" model="engagement.project" type="form">
+            <report download="csv,pdf" pdf_sizes="a4,letter"/>
             <header>
                 <button name="action_confirm" string="Activate" type="object" class="sum_highlight" />
                 <button name="action_done" string="Done" type="object" />
@@ -29,7 +30,7 @@
                     <group string="Flags">
                         <field name="active" widget="radio" />
                         <field name="verified" widget="boolean" />
-                        <field name="archived" widget="boolean_toggle" />
+                        <field name="archived" widget="boolean_toggle" readonly="state == 'done'" />
                         <field name="sequence" />
                     </group>
                 </group>
@@ -55,9 +56,9 @@
                         <group>
                             <group string="Dates">
                                 <field name="date_start" widget="date" />
-                                <field name="date_stop" widget="date" />
+                                <field name="date_stop" widget="date" required="state == 'active'" />
                                 <field name="datetime_due" widget="datetime" />
-                                <field name="completed_at" widget="datetime" />
+                                <field name="completed_at" widget="datetime" invisible="state != 'done'" />
                                 <field name="opening_time" />
                                 <field name="closing_time" />
                                 <field name="processing_time" />
@@ -68,9 +69,17 @@
                                 <field name="website" widget="url" />
                             </group>
                         </group>
+                        <group string="Conditions demo">
+                            <group>
+                                <field name="state" />
+                                <field name="kind" />
+                                <field name="completed_at" invisible="state != 'done'" />
+                                <field name="date_stop" required="state == 'active'" />
+                            </group>
+                        </group>
                     </page>
                     <page string="Text and media" name="text_media">
-                        <field name="description" widget="text" />
+                        <field name="description" widget="text" required="kind == 'engagement'" />
                         <field name="notes" widget="html" />
                         <field name="document" widget="binary" />
                         <field name="settings" widget="json" />
@@ -141,6 +150,18 @@
                                 <field name="name" />
                                 <field name="latitude" />
                                 <field name="longitude" />
+                            </list>
+                        </field>
+                    </page>
+                    <page string="Timesheets" name="timesheets">
+                        <field name="timesheet_ids">
+                            <list editable="bottom">
+                                <field name="date" />
+                                <field name="employee_id" />
+                                <field name="category" />
+                                <field name="hours" />
+                                <field name="billable" />
+                                <field name="description" />
                             </list>
                         </field>
                     </page>

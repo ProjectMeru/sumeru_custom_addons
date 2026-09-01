@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="utf-8"?>
+<sumeru>
+    <data>
+        <view id="view_engagement_timesheet_list" model="engagement.timesheet" type="list">
+            <report download="csv,xlsx,pdf" upload="bulk" pdf_sizes="a4,letter" modes="create,upsert"/>
+            <field name="date" />
+            <field name="project_id" />
+            <field name="employee_id" />
+            <field name="category" />
+            <field name="hours" />
+            <field name="billable" widget="boolean_toggle" />
+            <field name="rate" />
+            <field name="description" />
+        </view>
+        <view id="view_engagement_timesheet_form" model="engagement.timesheet" type="form">
+            <sheet>
+                <div class="sum_title">
+                    <h1>
+                        <field name="project_id" />
+                    </h1>
+                </div>
+                <group>
+                    <group string="Time">
+                        <field name="date" widget="date" />
+                        <field name="hours" />
+                        <field name="category" />
+                        <field name="billable" widget="boolean_toggle" />
+                        <field name="rate" invisible="billable == false" />
+                    </group>
+                    <group string="Assignment">
+                        <field name="employee_id" widget="many2one" />
+                    </group>
+                </group>
+                <group string="Notes">
+                    <field name="description" widget="text" required="hours > 8" />
+                </group>
+            </sheet>
+        </view>
+        <view id="view_engagement_timesheet_search" model="engagement.timesheet" type="search">
+            <field name="project_id" />
+            <field name="employee_id" />
+            <field name="category" />
+            <filter name="billable" string="Billable" domain='[["billable","=",true]]' />
+            <filter name="group_category" string="Category" group_by="category" />
+            <filter name="group_project" string="Engagement" group_by="project_id" />
+        </view>
+        <view id="view_engagement_timesheet_graph_bar" model="engagement.timesheet" type="graph" chart="bar" string="Hours by category">
+            <field name="category" type="row" />
+            <field name="hours" type="measure" />
+        </view>
+        <view id="view_engagement_timesheet_graph_pie" model="engagement.timesheet" type="graph" chart="pie" string="Hours by engagement">
+            <field name="project_id" type="row" />
+            <field name="hours" type="measure" />
+        </view>
+    </data>
+</sumeru>

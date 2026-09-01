@@ -2,6 +2,7 @@
 <sumeru>
     <data>
         <view id="view_engagement_milestone_list" model="engagement.milestone" type="list">
+            <report download="csv,pdf" pdf_sizes="a4,letter"/>
             <field name="name" />
             <field name="project_id" />
             <field name="user_id" />
@@ -25,12 +26,12 @@
                 <group>
                     <group string="Schedule">
                         <field name="date_start" widget="date" />
-                        <field name="date_stop" widget="date" />
+                        <field name="date_stop" widget="date" required="state == 'planned'" />
                     </group>
                     <group string="Team">
                         <field name="project_id" widget="many2one" />
                         <field name="user_id" widget="many2one" />
-                        <field name="employee_id" widget="many2one" />
+                        <field name="employee_id" widget="many2one" invisible="state == 'draft'" />
                     </group>
                 </group>
             </sheet>

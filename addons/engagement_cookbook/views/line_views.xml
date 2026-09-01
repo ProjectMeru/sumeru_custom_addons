@@ -2,6 +2,7 @@
 <sumeru>
     <data>
         <view id="view_engagement_deliverable_list" model="engagement.deliverable" type="list">
+            <report download="csv,xlsx,pdf" upload="bulk" pdf_sizes="a4,letter" modes="create,upsert"/>
             <field name="sequence" widget="handle" />
             <field name="project_id" />
             <field name="name" />
@@ -22,7 +23,7 @@
                     <field name="quantity" />
                     <field name="unit_price" />
                     <field name="line_total" readonly="1" />
-                    <field name="note" widget="text" />
+                    <field name="note" widget="text" required="quantity > 1" />
                 </group>
             </sheet>
         </view>
