@@ -20,44 +20,53 @@ Open **Engagements Cookbook** in the Apps launcher. Demo data loads from `data/d
 
 ## Module dependencies
 
-| Module | Why |
-|--------|-----|
-| `base` | Companies, users, partners, security groups |
-| `contacts` | Partner form UI + target for view inherit |
-| `hr` | Lead consultant (`hr.employee`) on engagements |
-| `mail` | Chatter on the engagement form |
+Manifest `depends` drives both **runtime install** and **compile-time Go linking**
+
+1. Add **direct** dependencies only in `manifest.json` (transitive deps install automatically).
+2. Run `make generate` — regenerates `init.go`, `models/zrefs.go`, `models/zmodels.go`, and root `zimports.go`.
+3. Rebuild (`make build` or `make install`) — Go code must be linked before `-i` can use new models.
+4. Install: `make install MODULES=engagement_cookbook` — installs the full tree (`base`, `contacts`, `hr`, `mail`, then this module).
+
+Example: adding `"product"` to `depends` also installs `product`'s own dependencies when you run `-i`.
+
+| Module     | Why                                            |
+| ---------- | ---------------------------------------------- |
+| `base`     | Companies, users, partners, security groups    |
+| `contacts` | Partner form UI + target for view inherit      |
+| `hr`       | Lead consultant (`hr.employee`) on engagements |
+| `mail`     | Chatter on the engagement form                 |
 
 ```json
 "depends": ["base", "contacts", "hr", "mail"]
 ```
 
-After changing `depends` or cross-module field types, run **`make generate`** so `models/zrefs.go` stays in sync.
+After changing `depends` or cross-module field types, run **`make generate`** so `init.go` and `models/zrefs.go` stay in sync. Convention validation fails if `init.go` depends imports drift from the manifest.
 
 ## Business models
 
-| Model | Role |
-|-------|------|
-| `engagement.project` | Client engagement — workflow, budget, relations, widgets |
-| `engagement.deliverable` | Billable lines with computed `line_total` |
-| `engagement.milestone` | Calendar / gantt milestones with object actions |
-| `engagement.timesheet` | Time entries — flat model for bulk CSV import |
-| `engagement.site` | Client sites on the map view |
-| `engagement.tag` | Engagement labels |
-| `engagement.service_line` | Consulting / implementation / support lines |
+| Model                     | Role                                                     |
+| ------------------------- | -------------------------------------------------------- |
+| `engagement.project`      | Client engagement — workflow, budget, relations, widgets |
+| `engagement.deliverable`  | Billable lines with computed `line_total`                |
+| `engagement.milestone`    | Calendar / gantt milestones with object actions          |
+| `engagement.timesheet`    | Time entries — flat model for bulk CSV import            |
+| `engagement.site`         | Client sites on the map view                             |
+| `engagement.tag`          | Engagement labels                                        |
+| `engagement.service_line` | Consulting / implementation / support lines              |
 
 ## Menus
 
-| Section | Menu | View modes |
-|---------|------|------------|
-| Operations | Engagements | kanban, list, form, calendar, gantt |
-| Operations | Deliverables | list, form |
-| Operations | Timesheets | list, form |
-| Planning | Milestones | calendar, gantt, list, form |
-| Planning | Client sites | map, list, form |
-| Analytics | Engagement analysis | graph, pivot, cohort, list |
-| Analytics | Timesheet analysis | graph, list, form |
-| Clients | Contacts (extended) | list, form, kanban |
-| Configuration | Tags, Service lines, About / tutorial | manager only |
+| Section       | Menu                                  | View modes                          |
+| ------------- | ------------------------------------- | ----------------------------------- |
+| Operations    | Engagements                           | kanban, list, form, calendar, gantt |
+| Operations    | Deliverables                          | list, form                          |
+| Operations    | Timesheets                            | list, form                          |
+| Planning      | Milestones                            | calendar, gantt, list, form         |
+| Planning      | Client sites                          | map, list, form                     |
+| Analytics     | Engagement analysis                   | graph, pivot, cohort, list          |
+| Analytics     | Timesheet analysis                    | graph, list, form                   |
+| Clients       | Contacts (extended)                   | list, form, kanban                  |
+| Configuration | Tags, Service lines, About / tutorial | manager only                        |
 
 ## Dynamic field conditions
 
@@ -69,17 +78,17 @@ Sumeru evaluates **expression attributes** on fields at runtime (see `sumeru_doc
 <field name="description" required="kind == 'engagement'"/>
 ```
 
-| Model | Field | Modifier | Expression |
-|-------|-------|----------|------------|
-| `engagement.project` | `completed_at` | invisible | `state != 'done'` |
-| `engagement.project` | `archived` | readonly | `state == 'done'` |
-| `engagement.project` | `description` | required | `kind == 'engagement'` |
-| `engagement.project` | `date_stop` | required | `state == 'active'` |
-| `engagement.deliverable` | `note` | required | `quantity > 1` |
-| `engagement.milestone` | `date_stop` | required | `state == 'planned'` |
-| `engagement.milestone` | `employee_id` | invisible | `state == 'draft'` |
-| `engagement.timesheet` | `rate` | invisible | `billable == false` |
-| `engagement.timesheet` | `description` | required | `hours > 8` |
+| Model                    | Field          | Modifier  | Expression             |
+| ------------------------ | -------------- | --------- | ---------------------- |
+| `engagement.project`     | `completed_at` | invisible | `state != 'done'`      |
+| `engagement.project`     | `archived`     | readonly  | `state == 'done'`      |
+| `engagement.project`     | `description`  | required  | `kind == 'engagement'` |
+| `engagement.project`     | `date_stop`    | required  | `state == 'active'`    |
+| `engagement.deliverable` | `note`         | required  | `quantity > 1`         |
+| `engagement.milestone`   | `date_stop`    | required  | `state == 'planned'`   |
+| `engagement.milestone`   | `employee_id`  | invisible | `state == 'draft'`     |
+| `engagement.timesheet`   | `rate`         | invisible | `billable == false`    |
+| `engagement.timesheet`   | `description`  | required  | `hours > 8`            |
 
 Toggle **Status** and **Kind** on an engagement form (Overview → Conditions demo) to see fields appear, lock, or become required.
 
@@ -91,13 +100,13 @@ List and form views declare export via a `<report>` child — no addon Go code r
 <report download="csv,xlsx,pdf" pdf_sizes="a4,letter"/>
 ```
 
-| View | Formats | Bulk upload |
-|------|---------|-------------|
-| Engagements list | CSV, XLSX, PDF | — |
-| Engagement form | CSV, PDF | — |
-| Deliverables list | CSV, XLSX, PDF | CSV |
-| Timesheets list | CSV, XLSX, PDF | CSV |
-| Milestones list | CSV, PDF | — |
+| View              | Formats        | Bulk upload |
+| ----------------- | -------------- | ----------- |
+| Engagements list  | CSV, XLSX, PDF | —           |
+| Engagement form   | CSV, PDF       | —           |
+| Deliverables list | CSV, XLSX, PDF | CSV         |
+| Timesheets list   | CSV, XLSX, PDF | CSV         |
+| Milestones list   | CSV, PDF       | —           |
 
 Use the **Report** menu on the list toolbar. Exports respect the current search domain (max **500 rows**). PDF supports A4 and Letter page sizes.
 
@@ -121,10 +130,10 @@ Import is **CSV only** (not XLSX upload). Max file size **8 MB**. See `sumeru_do
 
 ## Graph views
 
-| Menu | Chart types | Dimensions |
-|------|-------------|------------|
+| Menu                | Chart types    | Dimensions                       |
+| ------------------- | -------------- | -------------------------------- |
 | Engagement analysis | bar, line, pie | state / priority / kind × amount |
-| Timesheet analysis | bar, pie | category / project × hours |
+| Timesheet analysis  | bar, pie       | category / project × hours       |
 
 Switch chart type via the view switcher when multiple graph views exist for the same model.
 
@@ -154,15 +163,15 @@ Production teams often move this into a small **`application: false` bridge modu
 
 ## File map
 
-| Area | Path |
-|------|------|
-| Models | `models/engagement_*.go`, `models/partner_extend.go` |
-| Computed | `models/computed.go` |
-| Actions | `models/object_actions.go` |
-| Hooks | `hooks.go` |
-| Views | `views/*.xml` |
-| Demo | `data/demo.xml` |
-| Security | `security/security.xml`, `security/sys.access.csv` |
+| Area     | Path                                                 |
+| -------- | ---------------------------------------------------- |
+| Models   | `models/engagement_*.go`, `models/partner_extend.go` |
+| Computed | `models/computed.go`                                 |
+| Actions  | `models/object_actions.go`                           |
+| Hooks    | `hooks.go`                                           |
+| Views    | `views/*.xml`                                        |
+| Demo     | `data/demo.xml`                                      |
+| Security | `security/security.xml`, `security/sys.access.csv`   |
 
 ## Docs
 
