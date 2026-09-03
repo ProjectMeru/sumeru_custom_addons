@@ -3,7 +3,7 @@
     <data>
         <view id="view_engagement_project_kanban" model="engagement.project" type="kanban"
             default_group_by="state" records_draggable="1" columns_per_row="4">
-            <field name="state" />
+            <field name="state" invisible="1"/>
             <field name="avatar" widget="image" />
             <field name="name" />
             <field name="reference" />
