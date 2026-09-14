@@ -22,7 +22,7 @@
                         <field name="external_code" />
                         <field name="serial_number" />
                         <field name="short_code" />
-                        <field name="public_id" readonly="1" />
+                        <field name="public_id" readonly="true" />
                         <field name="priority" widget="priority" options="mode:stars,stars:5" />
                         <field name="kind" widget="radio" />
                         <field name="color_code" widget="color" />
@@ -89,7 +89,7 @@
                         <group>
                             <group string="Company">
                                 <field name="company_id" widget="selection" />
-                                <field name="company_name" readonly="1" />
+                                <field name="company_name" readonly="true" />
                                 <field name="user_id" widget="many2one" />
                                 <field name="employee_id" widget="many2one" />
                                 <field name="partner_id" widget="many2one" />
@@ -112,8 +112,8 @@
                         <field name="resource_id" />
                     </page>
                     <page string="Computed" name="computed">
-                        <field name="computed_amount" readonly="1" />
-                        <field name="stored_line_count" readonly="1" />
+                        <field name="computed_amount" readonly="true" />
+                        <field name="stored_line_count" readonly="true" />
                     </page>
                     <page string="Deliverables" name="lines">
                         <field name="deliverable_ids" widget="one2many">
@@ -121,7 +121,7 @@
                                 <field name="name" />
                                 <field name="quantity" />
                                 <field name="unit_price" />
-                                <field name="line_total" readonly="1" />
+                                <field name="line_total" readonly="true" />
                                 <field name="note" />
                             </list>
                         </field>

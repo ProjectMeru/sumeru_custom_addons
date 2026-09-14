@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <sumeru>
-    <data noupdate="1">
+    <data noupdate="true">
         <record id="partner_acme" model="core.partner">
             <field name="name">Acme Industries</field>
             <field name="email">projects@acme.example.com</field>
