@@ -170,7 +170,6 @@
             <footer>
                 <button name="action_confirm" string="Activate" type="object" />
             </footer>
-            <chatter />
         </view>
     </data>
 </sumeru>

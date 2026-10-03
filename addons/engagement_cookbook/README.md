@@ -25,7 +25,7 @@ Manifest `depends` drives both **runtime install** and **compile-time Go linking
 1. Add **direct** dependencies only in `manifest.json` (transitive deps install automatically).
 2. Run `make generate` — regenerates `init.go`, `models/zrefs.go`, `models/zmodels.go`, and root `zimports.go`.
 3. Rebuild (`make build` or `make install`) — Go code must be linked before `-i` can use new models.
-4. Install: `make install MODULES=engagement_cookbook` — installs the full tree (`base`, `contacts`, `hr`, `mail`, then this module).
+4. Install: `make install MODULES=engagement_cookbook` — installs the full tree (`base`, `contacts`, `hr`, `im`, then this module).
 
 Example: adding `"product"` to `depends` also installs `product`'s own dependencies when you run `-i`.
 
@@ -34,10 +34,11 @@ Example: adding `"product"` to `depends` also installs `product`'s own dependenc
 | `base`     | Companies, users, partners, security groups    |
 | `contacts` | Partner form UI + target for view inherit      |
 | `hr`       | Lead consultant (`hr.employee`) on engagements |
-| `mail`     | Chatter on the engagement form                 |
+| `im`       | Internal chat (activity dock); auto-installed with `base` |
+| `geo`      | Country, state, city on engagement address fields         |
 
 ```json
-"depends": ["base", "contacts", "hr", "mail"]
+"depends": ["base", "contacts", "hr", "im", "geo"]
 ```
 
 After changing `depends` or cross-module field types, run **`make generate`** so `init.go` and `models/zrefs.go` stay in sync. Convention validation fails if `init.go` depends imports drift from the manifest.

@@ -8,7 +8,8 @@
         "base",
         "contacts",
         "hr",
-        "mail"
+        "im",
+        "geo"
     ],
     "application": true,
     "data": [
