@@ -36,9 +36,10 @@ Example: adding `"product"` to `depends` also installs `product`'s own dependenc
 | `hr`       | Lead consultant (`hr.employee`) on engagements |
 | `im`       | Internal chat (activity dock); auto-installed with `base` |
 | `geo`      | Country, state, city on engagement address fields         |
+| `currency` | `core.currency` for `CurrencyID` and `sdk.Money` fields   |
 
 ```json
-"depends": ["base", "contacts", "hr", "im", "geo"]
+"depends": ["base", "currency", "contacts", "hr", "im", "geo"]
 ```
 
 After changing `depends` or cross-module field types, run **`make generate`** so `init.go` and `models/zrefs.go` stay in sync. Convention validation fails if `init.go` depends imports drift from the manifest.

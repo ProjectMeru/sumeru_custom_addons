@@ -6,6 +6,7 @@
     "description": "Professional services engagement tutorial: multi-model app, field widgets, view types, reporting, bulk import, conditional fields, and event bridges.",
     "depends": [
         "base",
+        "currency",
         "contacts",
         "hr",
         "im",
