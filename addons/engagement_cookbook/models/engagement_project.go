@@ -35,7 +35,7 @@ type EngagementProject struct {
 	CurrencyID sdk.Many2One[CoreCurrency] `sumeru:"string=Currency"`
 
 	Priority  sdk.Selection[Priority]     `sumeru:"string=Priority,default=normal"`
-	State     sdk.Selection[ProjectState] `sumeru:"required,string=Status,default=draft"`
+	State     sdk.Selection[ProjectState] `sumeru:"status,required,string=Status,default=draft"`
 	Kind      sdk.Selection[ProjectKind]    `sumeru:"string=Kind,default=engagement"`
 	ColorCode sdk.String                  `sumeru:"string=Color"`
 

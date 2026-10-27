@@ -158,10 +158,9 @@ Run `make generate`, then `make update MODULES=engagement_cookbook` for schema s
 
 Production teams often move this into a small **`application: false` bridge module** with `depends` on two apps — see `sale_crm` in `sumeru_addons`.
 
-## Object actions
+## Status
 
-- **Project:** `action_confirm` (→ active), `action_done`, `action_reset_draft`
-- **Milestone:** `action_plan`, `action_done`, `action_reset_draft`
+`State` is tagged `status`. The selection constants are the stages. Clicking a stage writes that value.
 
 ## File map
 
@@ -169,7 +168,6 @@ Production teams often move this into a small **`application: false` bridge modu
 | -------- | ---------------------------------------------------- |
 | Models   | `models/engagement_*.go`, `models/partner_extend.go` |
 | Computed | `models/computed.go`                                 |
-| Actions  | `models/object_actions.go`                           |
 | Hooks    | `hooks.go`                                           |
 | Views    | `views/*.xml`                                        |
 | Demo     | `data/demo.xml`                                      |

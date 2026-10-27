@@ -3,30 +3,24 @@ package models
 import (
 	"context"
 
-	"sumeru/core/orm"
+	"sumeru/core/sdk"
 )
 
-func init() {
-	orm.RegisterCompute("engagement.project", "computed_amount", []string{"amount", "quantity"}, computeProjectAmount)
-	orm.RegisterCompute("engagement.project", "stored_line_count", []string{"deliverable_ids"}, computeDeliverableCount)
-	orm.RegisterCompute("engagement.deliverable", "line_total", []string{"quantity", "unit_price"}, computeLineTotal)
-}
-
-func computeProjectAmount(_ context.Context, rec map[string]interface{}) (interface{}, error) {
+func computed_amount(_ context.Context, rec map[string]interface{}) (interface{}, error) {
 	amount := asFloat(rec["amount"])
 	qty := asFloat(rec["quantity"])
-	if qty == 0 {
+	if 0 == qty {
 		qty = 1
 	}
 	return amount * qty, nil
 }
 
-func computeDeliverableCount(ctx context.Context, rec map[string]interface{}) (interface{}, error) {
-	id, ok := orm.CoerceInt64(rec["id"])
-	if !ok || id <= 0 {
+func stored_line_count(ctx context.Context, rec map[string]interface{}) (interface{}, error) {
+	id, ok := sdk.CoerceInt64(rec["id"])
+	if !ok || 0 >= id {
 		return 0, nil
 	}
-	lines, err := orm.Search(ctx, "engagement.deliverable", [][]interface{}{
+	lines, err := sdk.Search(ctx, "engagement.deliverable", [][]interface{}{
 		{"project_id", "=", int(id)},
 	})
 	if err != nil {
@@ -35,9 +29,9 @@ func computeDeliverableCount(ctx context.Context, rec map[string]interface{}) (i
 	return len(lines), nil
 }
 
-func computeLineTotal(_ context.Context, rec map[string]interface{}) (interface{}, error) {
+func line_total(_ context.Context, rec map[string]interface{}) (interface{}, error) {
 	qty := asFloat(rec["quantity"])
-	if qty == 0 {
+	if 0 == qty {
 		qty = 1
 	}
 	return qty * asFloat(rec["unit_price"]), nil

@@ -13,5 +13,5 @@ type EngagementMilestone struct {
 	EmployeeID sdk.Many2One[HrEmployee]      `sumeru:"string=Owner"`
 	DateStart  sdk.Date                      `sumeru:"required,index,string=Start Date"`
 	DateStop   sdk.Date                      `sumeru:"string=End Date"`
-	State      sdk.Selection[MilestoneState] `sumeru:"required,string=Status,default=draft"`
+	State      sdk.Selection[MilestoneState] `sumeru:"status,required,string=Status,default=draft"`
 }

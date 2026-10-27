@@ -4,9 +4,6 @@
         <view id="view_engagement_project_form" model="engagement.project" type="form">
             <report download="csv,pdf" pdf_sizes="a4,letter"/>
             <header>
-                <button name="action_confirm" string="Activate" type="object" class="sum_highlight" />
-                <button name="action_done" string="Done" type="object" />
-                <button name="action_reset_draft" string="Reset to Draft" type="object" />
                 <field name="state" widget="statusbar" options="clickable:1" />
             </header>
             <sheet>
@@ -167,9 +164,6 @@
                     </page>
                 </notebook>
             </sheet>
-            <footer>
-                <button name="action_confirm" string="Activate" type="object" />
-            </footer>
         </view>
     </data>
 </sumeru>
