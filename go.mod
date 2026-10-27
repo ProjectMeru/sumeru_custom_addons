@@ -1,6 +1,6 @@
 module sumeru_custom_addons
 
-go 1.26.9
+go 1.27.0
 
 replace sumeru => ../sumeru
 
